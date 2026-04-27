@@ -4,6 +4,8 @@ import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import GLUpload from './pages/GLUpload';
 import GLReview from './pages/GLReview';
+import GLConfirm from './pages/GLConfirm';
+import GLPost from './pages/GLPost';
 import GLChat from './pages/GLChat';
 import ShippingComparison from './pages/ShippingComparison';
 import TrainingManagement from './pages/TrainingManagement';
@@ -36,6 +38,8 @@ function App() {
               <Route path="/" element={<Dashboard />} />
               <Route path="/gl/upload" element={<GLUpload />} />
               <Route path="/gl/review" element={<GLReview />} />
+              <Route path="/gl/confirm" element={<GLConfirm />} />
+              <Route path="/gl/post" element={<GLPost />} />
               <Route path="/gl/duplicate" element={<GLDuplicate />} />
               <Route path="/gl/chat" element={<GLChat />} />
               <Route path="/shipping/comparison" element={<ShippingComparison />} />

@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Users, 
-  Bot, 
-  FileText, 
-  Mail, 
-  Coins, 
-  History, 
-  Shield, 
+import {
+  Users,
+  Bot,
+  FileText,
+  Mail,
+  Coins,
+  History,
+  Shield,
   Save,
   CheckCircle2,
   Settings as SettingsIcon,
@@ -32,7 +32,7 @@ const UserRoles = ({ roles, openModal }) => (
     <div style={{ ...S.card, padding: '24px' }}>
       <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '4px' }}>User Roles & Permissions</h3>
       <p style={{ fontSize: '13px', color: '#94a3b8', marginBottom: '20px' }}>Manage organizational roles and their access levels.</p>
-      
+
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         {roles.map((r, i) => (
           <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #f1f5f9' }}>
@@ -45,7 +45,7 @@ const UserRoles = ({ roles, openModal }) => (
                 <p style={{ fontSize: '12px', color: '#94a3b8' }}>{r.perms.join(', ')} · {r.users} Users</p>
               </div>
             </div>
-            <button 
+            <button
               onClick={() => openModal('EDIT_PERMS', { ...r, index: i })}
               style={{ padding: '6px 12px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
             >
@@ -62,7 +62,7 @@ const AIConfig = () => (
   <div style={{ ...S.card, padding: '24px' }}>
     <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '4px' }}>AI Configuration (Learning Behaviour)</h3>
     <p style={{ fontSize: '13px', color: '#94a3b8', marginBottom: '24px' }}>Configure how the AI models learn from your data patterns.</p>
-    
+
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
@@ -73,7 +73,7 @@ const AIConfig = () => (
           <div style={{ width: '16px', height: '16px', background: 'white', borderRadius: '50%', position: 'absolute', right: '2px', top: '2px' }}></div>
         </div>
       </div>
-      
+
       <div>
         <label style={S.label}>Confidence Threshold (%)</label>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -102,14 +102,14 @@ const GLMapping = ({ rules, openModal, setRules }) => (
         <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '4px' }}>GL Mapping Rules</h3>
         <p style={{ fontSize: '13px', color: '#94a3b8' }}>Define static rules for recurring transaction descriptions.</p>
       </div>
-      <button 
+      <button
         onClick={() => openModal('ADD_RULE')}
         style={{ padding: '8px 16px', background: '#eff6ff', color: '#2563eb', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
       >
         <Plus size={14} /> Add New Rule
       </button>
     </div>
-    
+
     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
       {rules.map((rule, i) => (
         <div key={i} style={{ padding: '14px', background: '#fff', border: '1px solid #f1f5f9', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -126,7 +126,7 @@ const GLMapping = ({ rules, openModal, setRules }) => (
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <span style={{ fontSize: '11px', color: '#64748b', background: '#f1f5f9', padding: '2px 8px', borderRadius: '4px' }}>{rule.type}</span>
-            <button 
+            <button
               onClick={() => setRules(prev => prev.filter((_, idx) => idx !== i))}
               style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: '4px' }}
             >
@@ -143,7 +143,7 @@ const SMTPSettings = () => (
   <div style={{ ...S.card, padding: '24px' }}>
     <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '4px' }}>Email SMTP Settings</h3>
     <p style={{ fontSize: '13px', color: '#94a3b8', marginBottom: '24px' }}>Configure outgoing email server for notifications and alerts.</p>
-    
+
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
       <div style={{ gridColumn: 'span 2' }}>
         <label style={S.label}>SMTP Server</label>
@@ -181,7 +181,7 @@ const CurrencySettings = () => (
   <div style={{ ...S.card, padding: '24px' }}>
     <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '4px' }}>Currency Settings</h3>
     <p style={{ fontSize: '13px', color: '#94a3b8', marginBottom: '24px' }}>Manage base currency and exchange rate providers.</p>
-    
+
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       <div>
         <label style={S.label}>Base System Currency</label>
@@ -194,7 +194,7 @@ const CurrencySettings = () => (
           </select>
         </div>
       </div>
-      
+
       <div style={{ padding: '16px', background: '#eff6ff', borderRadius: '12px', display: 'flex', gap: '12px' }}>
         <Globe size={20} style={{ color: '#2563eb' }} />
         <div>
@@ -286,23 +286,23 @@ const Settings = () => {
   };
 
   const tabs = [
-    { id: 'roles',    label: 'User Roles', icon: Users },
-    { id: 'ai',       label: 'AI Configuration',    icon: Bot },
-    { id: 'gl',       label: 'GL Mapping Rules',    icon: FileText },
-    { id: 'smtp',     label: 'Email SMTP',          icon: Mail },
-    { id: 'currency', label: 'Currency Settings',   icon: Coins },
-    { id: 'audit',    label: 'Audit Logs',          icon: History },
+    { id: 'roles', label: 'User Roles', icon: Users },
+    { id: 'ai', label: 'AI Configuration', icon: Bot },
+    { id: 'gl', label: 'GL Mapping Rules', icon: FileText },
+    { id: 'smtp', label: 'Email SMTP', icon: Mail },
+    { id: 'currency', label: 'Currency Settings', icon: Coins },
+    { id: 'audit', label: 'Audit Logs', icon: History },
   ];
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'roles':    return <UserRoles roles={roles} openModal={openModal} />;
-      case 'ai':       return <AIConfig />;
-      case 'gl':       return <GLMapping rules={mappingRules} openModal={openModal} setRules={setMappingRules} />;
-      case 'smtp':     return <SMTPSettings />;
+      case 'roles': return <UserRoles roles={roles} openModal={openModal} />;
+      case 'ai': return <AIConfig />;
+      case 'gl': return <GLMapping rules={mappingRules} openModal={openModal} setRules={setMappingRules} />;
+      case 'smtp': return <SMTPSettings />;
       case 'currency': return <CurrencySettings />;
-      case 'audit':    return <AuditLogs />;
-      default:         return <UserRoles roles={roles} openModal={openModal} />;
+      case 'audit': return <AuditLogs />;
+      default: return <UserRoles roles={roles} openModal={openModal} />;
     }
   };
 
@@ -357,7 +357,7 @@ const Settings = () => {
       <AnimatePresence>
         {modalConfig.isOpen && (
           <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15,23,42,0.4)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
@@ -379,18 +379,18 @@ const Settings = () => {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     <div>
                       <label style={S.label}>DESCRIPTION PATTERN</label>
-                      <input 
-                        type="text" value={ruleForm.pattern} onChange={e => setRuleForm({...ruleForm, pattern: e.target.value})}
+                      <input
+                        type="text" value={ruleForm.pattern} onChange={e => setRuleForm({ ...ruleForm, pattern: e.target.value })}
                         placeholder="e.g. Netflix *"
-                        style={{ ...S.input, background: '#fff' }} 
+                        style={{ ...S.input, background: '#fff' }}
                       />
                     </div>
                     <div>
                       <label style={S.label}>GL ACCOUNT</label>
-                      <input 
-                        type="text" value={ruleForm.account} onChange={e => setRuleForm({...ruleForm, account: e.target.value})}
+                      <input
+                        type="text" value={ruleForm.account} onChange={e => setRuleForm({ ...ruleForm, account: e.target.value })}
                         placeholder="e.g. 6400 · Subscriptions"
-                        style={{ ...S.input, background: '#fff' }} 
+                        style={{ ...S.input, background: '#fff' }}
                       />
                     </div>
                   </div>
@@ -399,8 +399,8 @@ const Settings = () => {
                     {allPerms.map(p => {
                       const isActive = permForm.includes(p);
                       return (
-                        <button 
-                          key={p} 
+                        <button
+                          key={p}
                           onClick={() => togglePerm(p)}
                           style={{
                             display: 'flex', alignItems: 'center', gap: '10px', padding: '12px',
@@ -421,7 +421,7 @@ const Settings = () => {
               {/* Modal Footer */}
               <div style={{ padding: '16px 24px', borderTop: '1px solid #f1f5f9', background: '#f8fafc', display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
                 <button onClick={closeModal} style={{ padding: '9px 16px', background: '#fff', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '12px', fontWeight: 600, color: '#475569', cursor: 'pointer' }}>Cancel</button>
-                <button 
+                <button
                   onClick={modalConfig.type === 'ADD_RULE' ? saveRule : savePerms}
                   style={{ padding: '9px 20px', background: 'linear-gradient(to right, #1a56c4, #2563eb)', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 600, color: '#fff', cursor: 'pointer' }}
                 >
