@@ -42,6 +42,37 @@ export default function ShippingGCC() {
   const [step, setStep] = useState('upload');
   const [uploaded, setUploaded] = useState(false);
   const [filter, setFilter] = useState({ country: 'All', company: 'All' });
+  const [selectedBudgetIds, setSelectedBudgetIds] = useState(new Set(COUNTRIES.map(c => c.code)));
+  const [selectedAnomalyIds, setSelectedAnomalyIds] = useState(new Set(ANOMALIES.map((_, i) => i)));
+  const [anomaliesReviewed, setAnomaliesReviewed] = useState(false);
+
+  const toggleBudgetSelect = (id) => {
+    setSelectedBudgetIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleBudgetSelectAll = () => {
+    if (selectedBudgetIds.size === COUNTRIES.length) setSelectedBudgetIds(new Set());
+    else setSelectedBudgetIds(new Set(COUNTRIES.map(c => c.code)));
+  };
+
+  const toggleAnomalySelect = (id) => {
+    setSelectedAnomalyIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleAnomalySelectAll = () => {
+    if (selectedAnomalyIds.size === ANOMALIES.length) setSelectedAnomalyIds(new Set());
+    else setSelectedAnomalyIds(new Set(ANOMALIES.map((_, i) => i)));
+  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -216,15 +247,30 @@ export default function ShippingGCC() {
               <div style={{ ...S.card, overflow: 'hidden' }}>
                 <div style={{ padding: '16px 20px', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '15px' }}>Aggregated GCC Budget View — FY 2026</div>
-                  <button style={{ ...btn(false), padding: '8px 14px' }}><Download size={14} /> Export</button>
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <button style={{ ...btn(false), padding: '8px 14px' }}><Download size={14} /> Export</button>
+                    <button disabled={selectedBudgetIds.size === 0} style={{ ...btn(true), padding: '8px 14px' }}>
+                      <Check size={14} /> Approve Selected ({selectedBudgetIds.size})
+                    </button>
+                  </div>
                 </div>
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <thead><tr>{['Country','Curr. Revenue','Budget Revenue (+10%)','Budget Profit (+10%)','Budget Expenses (-5%)','Status'].map(h => <th key={h} style={S.th}>{h}</th>)}</tr></thead>
+                  <thead>
+                    <tr>
+                      <th style={{ ...S.th, width: '40px', paddingRight: 0 }}>
+                        <input type="checkbox" checked={COUNTRIES.length > 0 && selectedBudgetIds.size === COUNTRIES.length} onChange={toggleBudgetSelectAll} style={{ cursor: 'pointer', width: '15px', height: '15px', accentColor: '#2563eb' }} />
+                      </th>
+                      {['Country','Curr. Revenue','Budget Revenue (+10%)','Budget Profit (+10%)','Budget Expenses (-5%)','Status'].map(h => <th key={h} style={S.th}>{h}</th>)}
+                    </tr>
+                  </thead>
                   <tbody>
                     {COUNTRIES.map((c, i) => {
                       const revUSD = Math.round(c.revenue * c.rate);
                       return (
-                        <tr key={c.code} style={{ background: i % 2 === 0 ? '#fff' : '#fafbff' }}>
+                        <tr key={c.code} style={{ background: selectedBudgetIds.has(c.code) ? '#eff6ff' : i % 2 === 0 ? '#fff' : '#fafbff' }}>
+                          <td style={{ ...S.td, paddingRight: 0 }}>
+                            <input type="checkbox" checked={selectedBudgetIds.has(c.code)} onChange={() => toggleBudgetSelect(c.code)} style={{ cursor: 'pointer', width: '15px', height: '15px', accentColor: '#2563eb' }} />
+                          </td>
                           <td style={S.td}><span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><span>{c.flag}</span><span style={{ fontWeight: 600 }}>{c.name}</span></span></td>
                           <td style={S.td}>${revUSD.toLocaleString()}</td>
                           <td style={{ ...S.td, fontWeight: 700, color: '#059669' }}>${Math.round(revUSD * 1.10).toLocaleString()}</td>
@@ -264,16 +310,26 @@ export default function ShippingGCC() {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 8px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: 600, color: '#64748b' }}>
+                    <input type="checkbox" checked={ANOMALIES.length > 0 && selectedAnomalyIds.size === ANOMALIES.length} onChange={toggleAnomalySelectAll} style={{ width: '16px', height: '16px', accentColor: '#2563eb' }} />
+                    Select All Anomalies
+                  </label>
+                  <span style={{ fontSize: '12px', color: '#94a3b8' }}>{selectedAnomalyIds.size} of {ANOMALIES.length} selected</span>
+                </div>
                 {ANOMALIES.map((a, i) => (
                   <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.07 }}
-                    style={{ ...S.card, padding: '20px 24px', display: 'flex', alignItems: 'center', gap: '20px', borderLeft: `4px solid ${sevColor[a.severity]}` }}>
-                    <AlertTriangle size={24} style={{ color: sevColor[a.severity], flexShrink: 0 }} />
-                    <div style={{ flex: 1 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
-                        <span style={{ fontWeight: 700, fontSize: '15px', color: '#0f172a' }}>{a.country} — {a.metric}</span>
-                        <span style={S.badge(sevColor[a.severity])}>{a.severity}</span>
+                    style={{ ...S.card, padding: '20px 24px', display: 'flex', alignItems: 'center', gap: '20px', borderLeft: `4px solid ${sevColor[a.severity]}`, background: selectedAnomalyIds.has(i) ? '#eff6ff' : '#fff' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1 }}>
+                      <input type="checkbox" checked={selectedAnomalyIds.has(i)} onChange={() => toggleAnomalySelect(i)} style={{ cursor: 'pointer', width: '18px', height: '18px', accentColor: sevColor[a.severity] }} />
+                      <AlertTriangle size={24} style={{ color: sevColor[a.severity], flexShrink: 0 }} />
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+                          <span style={{ fontWeight: 700, fontSize: '15px', color: '#0f172a' }}>{a.country} — {a.metric}</span>
+                          <span style={S.badge(sevColor[a.severity])}>{a.severity}</span>
+                        </div>
+                        <p style={{ fontSize: '13px', color: '#64748b' }}>{a.detail}</p>
                       </div>
-                      <p style={{ fontSize: '13px', color: '#64748b' }}>{a.detail}</p>
                     </div>
                     <div style={{ textAlign: 'right', flexShrink: 0 }}>
                       <div style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '4px' }}>Detected Value</div>
@@ -287,11 +343,13 @@ export default function ShippingGCC() {
               <div style={{ ...S.card, padding: '20px 24px', background: 'linear-gradient(135deg,#f8fafc,#eff6ff)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
                   <div style={{ fontWeight: 700, color: '#0f172a', marginBottom: '4px' }}>Anomaly Report Ready</div>
-                  <div style={{ fontSize: '13px', color: '#64748b' }}>{ANOMALIES.length} outliers detected in GCC regional data. Review and take action.</div>
+                  <div style={{ fontSize: '13px', color: '#64748b' }}>{selectedAnomalyIds.size} outliers selected in GCC regional data. Review and take action.</div>
                 </div>
                 <div style={{ display: 'flex', gap: '12px' }}>
                   <button style={{ ...btn(false), background: '#fff', border: '1px solid #e2e8f0' }}><Download size={16} /> Export Report</button>
-                  <button style={btn(true)}><Check size={16} /> Mark as Reviewed</button>
+                  <button onClick={() => setAnomaliesReviewed(true)} disabled={selectedAnomalyIds.size === 0} style={{ ...btn(true), background: anomaliesReviewed ? '#059669' : selectedAnomalyIds.size === 0 ? '#e2e8f0' : 'linear-gradient(to right,#1a56c4,#2563eb)' }}>
+                    <Check size={16} /> {anomaliesReviewed ? 'Reviewed ✓' : `Mark Selected as Reviewed (${selectedAnomalyIds.size})`}
+                  </button>
                 </div>
               </div>
               <div style={{ display: 'flex', justifyContent: 'flex-start' }}>

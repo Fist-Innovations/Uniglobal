@@ -54,6 +54,29 @@ export default function ShippingKuwait() {
     expenses:Math.round(c.expenses * 0.95),
   })));
   const [approved, setApproved] = useState(false);
+  const [selectedIds, setSelectedIds] = useState(new Set(COMPANIES.map(c => c.name)));
+
+  const toggleSelect = (id) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === COMPANIES.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(COMPANIES.map(c => c.name)));
+    }
+  };
+
+  const handleBulkApprove = () => {
+    setApproved(true);
+    // In a real app, we'd mark selectedIds as approved in the backend
+  };
 
   const compChart = [
     { name: 'Revenue',  ...Object.fromEntries(COMPANIES.map(c => [c.name.split(' ')[0], +(c.revenue/1000).toFixed(1)])) },
@@ -301,7 +324,7 @@ export default function ShippingKuwait() {
                 <div style={{ padding: '20px 24px', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc' }}>
                   <div>
                     <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '16px' }}>Final Budget Draft — FY 2026</div>
-                    <div style={{ fontSize: '12px', color: '#94a3b8' }}>Kuwait Financial Comparison · {COMPANIES.length} companies</div>
+                    <div style={{ fontSize: '12px', color: '#94a3b8' }}>Kuwait Financial Comparison · {selectedIds.size} of {COMPANIES.length} selected</div>
                   </div>
                   <div style={{ display: 'flex', gap: '10px' }}>
                     <button style={{ ...btn(false), background: '#fff', border: '1px solid #e2e8f0' }}><Download size={16} /> Export PDF</button>
@@ -311,12 +334,18 @@ export default function ShippingKuwait() {
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
                     <tr>
+                      <th style={{ ...S.th, width: '40px', paddingRight: 0 }}>
+                        <input type="checkbox" checked={COMPANIES.length > 0 && selectedIds.size === COMPANIES.length} onChange={toggleSelectAll} style={{ cursor: 'pointer', width: '15px', height: '15px', accentColor: '#2563eb' }} />
+                      </th>
                       {['Company','Rev 2025','Rev 2026 (+10%)','Assets 2026 (+10%)','Profit 2026 (+10%)','Expenses 2026 (-5%)'].map(h=><th key={h} style={S.th}>{h}</th>)}
                     </tr>
                   </thead>
                   <tbody>
                     {budget.map((b, i) => (
-                      <tr key={i} style={{ background: i % 2 === 0 ? '#fff' : '#fafbff' }}>
+                      <tr key={i} style={{ background: selectedIds.has(b.name) ? '#eff6ff' : i % 2 === 0 ? '#fff' : '#fafbff' }}>
+                        <td style={{ ...S.td, paddingRight: 0 }}>
+                          <input type="checkbox" checked={selectedIds.has(b.name)} onChange={() => toggleSelect(b.name)} style={{ cursor: 'pointer', width: '15px', height: '15px', accentColor: '#2563eb' }} />
+                        </td>
                         <td style={{ ...S.td, fontWeight: 700, color: '#0f172a' }}>{b.name}</td>
                         <td style={S.td}>KWD {COMPANIES[i].revenue.toLocaleString()}</td>
                         <td style={{ ...S.td, color: '#059669', fontWeight: 700 }}>KWD {b.revenue.toLocaleString()}</td>
@@ -331,11 +360,11 @@ export default function ShippingKuwait() {
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <button style={btn(false)} onClick={() => setStep('budget')}>Back</button>
                 <div style={{ display: 'flex', gap: '12px' }}>
-                  <button style={{ ...btn(false), color: '#dc2626', background: '#fef2f2', border: '1px solid #fecaca' }}>
-                    <X size={16} /> Reject
+                  <button disabled={selectedIds.size === 0} style={{ ...btn(false), color: selectedIds.size === 0 ? '#94a3b8' : '#dc2626', background: selectedIds.size === 0 ? '#f8fafc' : '#fef2f2', border: selectedIds.size === 0 ? '1px solid #e2e8f0' : '1px solid #fecaca', cursor: selectedIds.size === 0 ? 'not-allowed' : 'pointer' }}>
+                    <X size={16} /> Reject Selected ({selectedIds.size})
                   </button>
-                  <button onClick={() => setApproved(true)} style={{ ...btn(true), background: approved ? '#059669' : 'linear-gradient(to right,#1a56c4,#2563eb)' }}>
-                    <Check size={16} /> {approved ? 'Approved ✓' : 'Approve Budget'}
+                  <button onClick={handleBulkApprove} disabled={selectedIds.size === 0} style={{ ...btn(true), background: approved ? '#059669' : selectedIds.size === 0 ? '#e2e8f0' : 'linear-gradient(to right,#1a56c4,#2563eb)', cursor: selectedIds.size === 0 ? 'not-allowed' : 'pointer' }}>
+                    <Check size={16} /> {approved ? 'Approved ✓' : `Approve Selected (${selectedIds.size})`}
                   </button>
                 </div>
               </div>
