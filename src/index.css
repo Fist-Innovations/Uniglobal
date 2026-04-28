@@ -212,10 +212,10 @@ button.secondary:hover { background: #f1f5f9; }
 .overflow-hidden { overflow: hidden; }
 .relative { position: relative; }
 .absolute { position: absolute; }
-.top-[-10\%] { top: -10%; }
-.left-[-10\%] { left: -10%; }
-.bottom-[-10\%] { bottom: -10%; }
-.right-[-10\%] { right: -10%; }
+.top-\[-10\%\] { top: -10%; }
+.left-\[-10\%\] { left: -10%; }
+.bottom-\[-10\%\] { bottom: -10%; }
+.right-\[-10\%\] { right: -10%; }
 .bottom-20 { bottom: 80px; }
 .right-20 { right: 80px; }
 .left-3 { left: 12px; }
