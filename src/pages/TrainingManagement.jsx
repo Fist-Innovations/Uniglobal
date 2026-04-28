@@ -38,10 +38,10 @@ const INITIAL_STUDENTS = [
 ];
 
 const EVENT_TYPES = [
-  { id: 'fee_due',  label: 'Fee Due',              icon: Mail,          color: '#2563eb', trigger: '3 days before due date',      enabled: true },
-  { id: 'overdue',  label: 'Overdue Payment',       icon: AlertTriangle, color: '#dc2626', trigger: 'Immediate upon overdue',       enabled: true },
-  { id: 'exam_reg', label: 'Exam Registration',     icon: Calendar,      color: '#059669', trigger: '7 days before opening',       enabled: false },
-  { id: 'doc_sub',  label: 'Document Submission',   icon: FileCode,      color: '#7c3aed', trigger: '14 days after enrollment',    enabled: true },
+  { id: 'fee_due',  label: 'Fee Due',              icon: Mail,          color: 'var(--primary)', trigger: '3 days before due date',      enabled: true },
+  { id: 'overdue',  label: 'Overdue Payment',       icon: AlertTriangle, color: '#ef4444', trigger: 'Immediate upon overdue',       enabled: true },
+  { id: 'exam_reg', label: 'Exam Registration',     icon: Calendar,      color: '#10b981', trigger: '7 days before opening',       enabled: false },
+  { id: 'doc_sub',  label: 'Document Submission',   icon: FileCode,      color: '#a855f7', trigger: '14 days after enrollment',    enabled: true },
 ];
 
 const TEMPLATES = [
@@ -66,30 +66,30 @@ const NOTIFICATION_LOGS = [
 // --- Styles ---
 
 const S = {
-  card: { background: '#fff', borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', overflow: 'hidden' },
-  th: { padding: '14px 20px', fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.8px', background: '#f8fafc', textAlign: 'left' },
-  td: { padding: '16px 20px', fontSize: '13px', color: '#374151', borderBottom: '1px solid #f8fafc' },
-  label: { display: 'block', fontSize: '12px', fontWeight: 700, color: '#64748b', marginBottom: '6px' },
-  input: { width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '14px', outline: 'none', transition: 'all 0.2s' },
+  card: { background: 'var(--bg-card)', borderRadius: '16px', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)', overflow: 'hidden', transition: 'background 0.3s, border-color 0.3s' },
+  th: { padding: '14px 20px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.8px', background: 'var(--bg-dark)', textAlign: 'left' },
+  td: { padding: '16px 20px', fontSize: '13px', color: 'var(--text-main)', borderBottom: '1px solid var(--border)' },
+  label: { display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '6px' },
+  input: { width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', fontSize: '14px', outline: 'none', background: 'var(--bg-dark)', color: 'var(--text-main)', transition: 'all 0.2s' },
   tabBtn: (active) => ({
     display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px', borderRadius: '10px', border: 'none', cursor: 'pointer',
     fontSize: '13px', fontWeight: 600, transition: 'all 0.2s',
-    background: active ? 'linear-gradient(to right, #1a56c4, #2563eb)' : 'transparent',
-    color: active ? '#fff' : '#64748b',
-    boxShadow: active ? '0 4px 12px rgba(37,99,235,0.25)' : 'none'
+    background: active ? 'var(--primary)' : 'transparent',
+    color: active ? '#ffffff' : 'var(--text-muted)',
+    boxShadow: active ? '0 4px 12px rgba(0,0,0,0.2)' : 'none'
   }),
   statusBadge: (status) => {
     const colors = {
-      Paid: { bg: '#ecfdf5', text: '#059669' },
-      Pending: { bg: '#fff7ed', text: '#d97706' },
-      Overdue: { bg: '#fef2f2', text: '#dc2626' },
-      Active: { bg: '#ecfdf5', text: '#059669' },
-      Paused: { bg: '#f1f5f9', text: '#64748b' },
-      Delivered: { bg: '#ecfdf5', text: '#059669' },
-      Failed: { bg: '#fef2f2', text: '#dc2626' },
+      Paid: { bg: 'rgba(16, 185, 129, 0.1)', text: '#10b981' },
+      Pending: { bg: 'rgba(245, 158, 11, 0.1)', text: '#f59e0b' },
+      Overdue: { bg: 'rgba(239, 68, 68, 0.1)', text: '#ef4444' },
+      Active: { bg: 'rgba(16, 185, 129, 0.1)', text: '#10b981' },
+      Paused: { bg: 'var(--bg-dark)', text: 'var(--text-muted)' },
+      Delivered: { bg: 'rgba(16, 185, 129, 0.1)', text: '#10b981' },
+      Failed: { bg: 'rgba(239, 68, 68, 0.1)', text: '#ef4444' },
     };
     const c = colors[status] || colors.Paused;
-    return { padding: '4px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: 700, background: c.bg, color: c.text };
+    return { padding: '4px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: 700, background: c.bg, color: c.text, border: '1px solid transparent' };
   }
 };
 
@@ -232,8 +232,8 @@ const TrainingManagement = () => {
       {/* Header Area */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#0f172a', marginBottom: '4px' }}>Training Management</h1>
-          <p style={{ fontSize: '14px', color: '#64748b' }}>Automated student lifecycle notifications and event tracking</p>
+          <h1 style={{ fontSize: '24px', fontWeight: 800, color: 'var(--text-main)', marginBottom: '4px' }}>Training Management</h1>
+          <p style={{ fontSize: '14px', color: 'var(--text-muted)' }}>Automated student lifecycle notifications and event tracking</p>
         </div>
         <div style={{ display: 'flex', gap: '12px' }}>
           {['students', 'rules', 'logs'].includes(activeTab) && (
@@ -244,7 +244,7 @@ const TrainingManagement = () => {
                 ...(activeTab === 'rules' ? { ...ruleFilter } : {}),
                 ...(activeTab === 'logs' ? { ...logFilter } : {}),
               })}
-              style={{ padding: '10px 18px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '13px', fontWeight: 600, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+              style={{ padding: '10px 18px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '10px', fontSize: '13px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
             >
               <Filter size={16} /> Filters
             </button>
@@ -252,13 +252,13 @@ const TrainingManagement = () => {
           {['students', 'logs'].includes(activeTab) && (
             <button 
               onClick={activeTab === 'students' ? exportStudents : exportLogs}
-              style={{ padding: '10px 18px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '13px', fontWeight: 600, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+              style={{ padding: '10px 18px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '10px', fontSize: '13px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
             >
               <Download size={16} /> Export
             </button>
           )}
           {activeTab === 'students' && (
-            <button onClick={() => openModal('add_student')} style={{ padding: '10px 20px', background: 'linear-gradient(to right, #1a56c4, #2563eb)', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 600, color: '#fff', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', boxShadow: '0 4px 12px rgba(37,99,235,0.3)' }}>
+            <button onClick={() => openModal('add_student')} style={{ padding: '10px 20px', background: 'var(--primary)', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 600, color: '#ffffff', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}>
               <Plus size={16} /> Add New
             </button>
           )}
@@ -266,7 +266,7 @@ const TrainingManagement = () => {
       </div>
 
       {/* Sub-navigation Tabs */}
-      <div style={{ display: 'flex', gap: '4px', background: '#fff', padding: '6px', borderRadius: '14px', border: '1px solid #e2e8f0', width: 'fit-content' }}>
+      <div style={{ display: 'flex', gap: '4px', background: 'var(--bg-card)', padding: '6px', borderRadius: '14px', border: '1px solid var(--border)', width: 'fit-content' }}>
         {TABS.map(tab => (
           <button 
             key={tab.id} 
@@ -302,11 +302,11 @@ const TrainingManagement = () => {
         {modal.isOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
             <motion.div initial={{ scale: 0.9, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              style={{ background: '#fff', borderRadius: '20px', width: '100%', maxWidth: modal.type === 'payload' ? '600px' : '500px', overflow: 'hidden', boxShadow: '0 20px 50px rgba(0,0,0,0.15)' }}>
+              style={{ background: 'var(--bg-card)', borderRadius: '20px', width: '100%', maxWidth: modal.type === 'payload' ? '600px' : '500px', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)', border: '1px solid var(--border)' }}>
               
               {/* Modal Header */}
-              <div style={{ padding: '20px 24px', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc' }}>
-                <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#0f172a' }}>
+              <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-dark)' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-main)' }}>
                   {modal.type === 'view_student' && 'Student Details'}
                   {modal.type === 'edit_student' && 'Edit Student'}
                   {modal.type === 'add_student' && 'Add New Student'}
@@ -318,7 +318,7 @@ const TrainingManagement = () => {
                   {modal.type === 'payload' && 'Notification Payload'}
                   {modal.type === 'filter' && `Filter ${modal.data.tab.charAt(0).toUpperCase() + modal.data.tab.slice(1)}`}
                 </h3>
-                <button onClick={closeModal} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#64748b' }}><X size={20} /></button>
+                <button onClick={closeModal} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><X size={20} /></button>
               </div>
 
               {/* Modal Body */}
@@ -326,16 +326,16 @@ const TrainingManagement = () => {
                 {modal.type === 'view_student' && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
-                      <div style={{ width: '60px', height: '60px', borderRadius: '15px', background: 'linear-gradient(135deg, #1a56c4, #2563eb)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '20px', fontWeight: 800 }}>{modal.data.avatar}</div>
+                      <div style={{ width: '60px', height: '60px', borderRadius: '15px', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff', fontSize: '20px', fontWeight: 800 }}>{modal.data.avatar}</div>
                       <div>
-                        <h4 style={{ fontSize: '18px', fontWeight: 700 }}>{modal.data.name}</h4>
-                        <p style={{ color: '#64748b' }}>{modal.data.course}</p>
+                        <h4 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-main)' }}>{modal.data.name}</h4>
+                        <p style={{ color: 'var(--text-muted)' }}>{modal.data.course}</p>
                       </div>
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                       <div><label style={S.label}>Fee Status</label><div style={S.statusBadge(modal.data.feeStatus)}>{modal.data.feeStatus}</div></div>
-                      <div><label style={S.label}>Next Academic Event</label><div style={{ fontWeight: 600 }}>{modal.data.academicEvent}</div></div>
-                      <div><label style={S.label}>Scheduled Date</label><div style={{ color: '#64748b' }}>{modal.data.date}</div></div>
+                      <div><label style={S.label}>Next Academic Event</label><div style={{ fontWeight: 600, color: 'var(--text-main)' }}>{modal.data.academicEvent}</div></div>
+                      <div><label style={S.label}>Scheduled Date</label><div style={{ color: 'var(--text-muted)' }}>{modal.data.date}</div></div>
                     </div>
                   </div>
                 )}
@@ -350,7 +350,7 @@ const TrainingManagement = () => {
                         <option>Paid</option><option>Pending</option><option>Overdue</option>
                       </select>
                     </div>
-                    <button onClick={handleSaveStudent} style={{ marginTop: '12px', padding: '12px', background: '#2563eb', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: 'pointer' }}>Save Changes</button>
+                    <button onClick={handleSaveStudent} style={{ marginTop: '12px', padding: '12px', background: 'var(--primary)', color: '#ffffff', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: 'pointer' }}>Save Changes</button>
                   </div>
                 )}
 
@@ -367,7 +367,7 @@ const TrainingManagement = () => {
                         <option value="#7c3aed">Purple (Document)</option>
                       </select>
                     </div>
-                    <button onClick={handleAddEvent} style={{ marginTop: '12px', padding: '12px', background: '#2563eb', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: 'pointer' }}>Create Event Type</button>
+                    <button onClick={handleAddEvent} style={{ marginTop: '12px', padding: '12px', background: 'var(--primary)', color: '#ffffff', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: 'pointer' }}>Create Event Type</button>
                   </div>
                 )}
 
@@ -384,26 +384,26 @@ const TrainingManagement = () => {
                         <option value="#7c3aed">Purple (Document)</option>
                       </select>
                     </div>
-                    <button onClick={handleSaveEvent} style={{ marginTop: '12px', padding: '13px', background: 'linear-gradient(to right,#1a56c4,#2563eb)', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '14px', cursor: 'pointer' }}>Save Changes</button>
+                    <button onClick={handleSaveEvent} style={{ marginTop: '12px', padding: '13px', background: 'var(--primary)', color: '#ffffff', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '14px', cursor: 'pointer' }}>Save Changes</button>
                   </div>
                 )}
 
                 {modal.type === 'delete_confirm' && (
                   <div style={{ textAlign: 'center' }}>
-                    <div style={{ width: '64px', height: '64px', background: '#fef2f2', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
-                      <Trash2 size={32} color="#dc2626" />
+                    <div style={{ width: '64px', height: '64px', background: 'rgba(239, 68, 68, 0.1)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+                      <Trash2 size={32} color="#ef4444" />
                     </div>
-                    <h4 style={{ fontSize: '18px', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>Are you sure?</h4>
-                    <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>This action cannot be undone. You are about to delete <strong>{modal.data.name}</strong>.</p>
+                    <h4 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-main)', marginBottom: '8px' }}>Are you sure?</h4>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '24px' }}>This action cannot be undone. You are about to delete <strong>{modal.data.name}</strong>.</p>
                     <div style={{ display: 'flex', gap: '12px' }}>
-                      <button onClick={closeModal} style={{ ...S.input, background: '#f8fafc', flex: 1, fontWeight: 700, cursor: 'pointer' }}>Cancel</button>
-                      <button onClick={() => modal.data.onDelete(modal.data.id)} style={{ ...S.input, background: '#dc2626', color: '#fff', border: 'none', flex: 1, fontWeight: 700, cursor: 'pointer' }}>Delete Now</button>
+                      <button onClick={closeModal} style={{ ...S.input, background: 'var(--bg-dark)', flex: 1, fontWeight: 700, cursor: 'pointer' }}>Cancel</button>
+                      <button onClick={() => modal.data.onDelete(modal.data.id)} style={{ ...S.input, background: '#ef4444', color: '#ffffff', border: 'none', flex: 1, fontWeight: 700, cursor: 'pointer' }}>Delete Now</button>
                     </div>
                   </div>
                 )}
 
                 {modal.type === 'payload' && (
-                  <div style={{ background: '#0f172a', padding: '20px', borderRadius: '12px', color: '#38bdf8', fontSize: '13px', fontFamily: 'monospace', whiteSpace: 'pre-wrap', maxHeight: '400px', overflowY: 'auto' }}>
+                  <div style={{ background: 'var(--bg-dark)', padding: '20px', borderRadius: '12px', color: 'var(--primary)', fontSize: '13px', fontFamily: 'monospace', whiteSpace: 'pre-wrap', maxHeight: '400px', overflowY: 'auto', border: '1px solid var(--border)' }}>
                     {JSON.stringify({ notification_id: modal.data.id, timestamp: modal.data.time, recipient: modal.data.recipient, method: modal.data.type, event_hook: modal.data.event, status: modal.data.status, metadata: { subject: modal.data.details, delivery_node: 'us-east-erp-01', retry_count: 0 } }, null, 2)}
                   </div>
                 )}
@@ -422,7 +422,7 @@ const TrainingManagement = () => {
                       <div><label style={S.label}>Event Date</label><input type="date" value={formData.date || ''} onChange={e => setField('date', e.target.value)} style={S.input} /></div>
                     </div>
                     <div><label style={S.label}>Next Academic Event</label><input value={formData.academicEvent || ''} onChange={e => setField('academicEvent', e.target.value)} placeholder="e.g. Orientation" style={S.input} /></div>
-                    <button onClick={handleAddStudent} style={{ marginTop: '8px', padding: '13px', background: 'linear-gradient(to right,#1a56c4,#2563eb)', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '14px', cursor: 'pointer' }}>Add Student</button>
+                    <button onClick={handleAddStudent} style={{ marginTop: '8px', padding: '13px', background: 'var(--primary)', color: '#ffffff', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '14px', cursor: 'pointer' }}>Add Student</button>
                   </div>
                 )}
 
@@ -434,7 +434,7 @@ const TrainingManagement = () => {
                       <label style={S.label}>Message Body</label>
                       <textarea value={formData.body || ''} onChange={e => setField('body', e.target.value)} style={{ ...S.input, height: '140px', resize: 'none', lineHeight: 1.6 }} />
                     </div>
-                    <button onClick={() => { handleSaveTemplate(formData); }} style={{ marginTop: '8px', padding: '13px', background: 'linear-gradient(to right,#1a56c4,#2563eb)', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '14px', cursor: 'pointer' }}>Save Template</button>
+                    <button onClick={() => { handleSaveTemplate(formData); }} style={{ marginTop: '8px', padding: '13px', background: 'var(--primary)', color: '#ffffff', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '14px', cursor: 'pointer' }}>Save Template</button>
                   </div>
                 )}
                 
@@ -443,7 +443,7 @@ const TrainingManagement = () => {
                     <div><label style={S.label}>Rule Name</label><input value={formData.name || ''} onChange={e => setField('name', e.target.value)} style={S.input} /></div>
                     <div><label style={S.label}>Event Trigger</label><select value={formData.event || eventTypes[0]?.label} onChange={e => setField('event', e.target.value)} style={S.input}>{eventTypes.map(e => <option key={e.id}>{e.label}</option>)}</select></div>
                     <div><label style={S.label}>Condition</label><input value={formData.condition || ''} onChange={e => setField('condition', e.target.value)} style={S.input} /></div>
-                    <button onClick={handleSaveRule} style={{ marginTop: '12px', padding: '12px', background: '#2563eb', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: 'pointer' }}>{formData.id ? 'Update Rule' : 'Create Rule'}</button>
+                    <button onClick={handleSaveRule} style={{ marginTop: '12px', padding: '12px', background: 'var(--primary)', color: '#ffffff', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: 'pointer' }}>{formData.id ? 'Update Rule' : 'Create Rule'}</button>
                   </div>
                 )}
 
@@ -506,13 +506,13 @@ const TrainingManagement = () => {
                     <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
                       <button 
                         onClick={() => handleApplyFilters({ course: 'All', feeStatus: 'All', status: 'All', method: 'All' })}
-                        style={{ ...S.input, background: '#f1f5f9', flex: 1, fontWeight: 700, cursor: 'pointer', border: 'none' }}
+                        style={{ ...S.input, background: 'var(--border)', flex: 1, fontWeight: 700, cursor: 'pointer', border: 'none', color: 'var(--text-main)' }}
                       >
                         Reset
                       </button>
                       <button 
                         onClick={() => handleApplyFilters(formData)}
-                        style={{ ...S.input, background: '#2563eb', color: '#fff', flex: 1, fontWeight: 700, cursor: 'pointer', border: 'none' }}
+                        style={{ ...S.input, background: 'var(--primary)', color: '#ffffff', flex: 1, fontWeight: 700, cursor: 'pointer', border: 'none' }}
                       >
                         Apply Filters
                       </button>
@@ -532,16 +532,16 @@ const TrainingManagement = () => {
 
 const StudentScreen = ({ students, onOpenModal, searchTerm, setSearchTerm }) => (
   <div style={S.card}>
-    <div style={{ padding: '20px 24px', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       <div>
-        <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a' }}>Enrolled Students</h3>
-        <p style={{ fontSize: '12px', color: '#94a3b8' }}>Managing {students.length} active students</p>
+        <h3 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-main)' }}>Enrolled Students</h3>
+        <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Managing {students.length} active students</p>
       </div>
       <div style={{ position: 'relative' }}>
-        <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+        <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
         <input 
           placeholder="Search students..." 
-          style={{ ...S.input, paddingLeft: '36px', width: '240px', background: '#f8fafc' }} 
+          style={{ ...S.input, paddingLeft: '36px', width: '240px', background: 'var(--bg-dark)' }} 
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -555,27 +555,27 @@ const StudentScreen = ({ students, onOpenModal, searchTerm, setSearchTerm }) => 
       </thead>
       <tbody>
         {students.map((s, idx) => (
-          <tr key={s.id} style={{ background: idx % 2 === 0 ? '#fff' : '#fafbff' }}>
+          <tr key={s.id} style={{ background: idx % 2 === 0 ? 'var(--bg-card)' : 'var(--bg-dark)' }}>
             <td style={S.td}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg, #1a56c4, #2563eb)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '12px', fontWeight: 700 }}>
+                <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff', fontSize: '12px', fontWeight: 700 }}>
                   {s.avatar}
                 </div>
-                <span style={{ fontWeight: 600 }}>{s.name}</span>
+                <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>{s.name}</span>
               </div>
             </td>
             <td style={S.td}>{s.course}</td>
             <td style={S.td}><span style={S.statusBadge(s.feeStatus)}>{s.feeStatus}</span></td>
             <td style={S.td}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#2563eb', fontWeight: 600 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--primary)', fontWeight: 600 }}>
                 <Zap size={14} /> {s.academicEvent}
               </div>
             </td>
-            <td style={S.td}><div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#64748b' }}><Calendar size={14} /> {s.date}</div></td>
+            <td style={S.td}><div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)' }}><Calendar size={14} /> {s.date}</div></td>
             <td style={S.td}>
               <div style={{ display: 'flex', gap: '8px' }}>
-                <button onClick={() => onOpenModal('view_student', s)} style={{ padding: '6px', borderRadius: '6px', border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', color: '#64748b' }}><Eye size={14} /></button>
-                <button onClick={() => onOpenModal('edit_student', s)} style={{ padding: '6px', borderRadius: '6px', border: '1px solid #bfdbfe', background: '#eff6ff', cursor: 'pointer', color: '#2563eb' }}><Edit2 size={14} /></button>
+                <button onClick={() => onOpenModal('view_student', s)} style={{ padding: '6px', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--bg-card)', cursor: 'pointer', color: 'var(--text-muted)' }}><Eye size={14} /></button>
+                <button onClick={() => onOpenModal('edit_student', s)} style={{ padding: '6px', borderRadius: '6px', border: '1px solid rgba(37, 99, 235, 0.2)', background: 'rgba(37, 99, 235, 0.1)', cursor: 'pointer', color: 'var(--primary)' }}><Edit2 size={14} /></button>
               </div>
             </td>
           </tr>
@@ -590,38 +590,38 @@ const EventConfigScreen = ({ eventTypes, onOpenModal, onToggle }) => (
     {eventTypes.map(event => (
       <div key={event.id} style={{ ...S.card, padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: `${event.color}10`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(' + event.color + ', 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <event.icon size={24} style={{ color: event.color }} />
           </div>
-          <button onClick={() => onOpenModal('edit_event', event)} style={{ padding: '6px', borderRadius: '6px', border: 'none', background: '#f1f5f9', color: '#64748b', cursor: 'pointer' }}><Settings2 size={14} /></button>
+          <button onClick={() => onOpenModal('edit_event', event)} style={{ padding: '6px', borderRadius: '6px', border: 'none', background: 'var(--bg-dark)', color: 'var(--text-muted)', cursor: 'pointer' }}><Settings2 size={14} /></button>
         </div>
         <div>
-          <h4 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', marginBottom: '4px' }}>{event.label}</h4>
-          <p style={{ fontSize: '13px', color: '#64748b' }}>Triggers notification to students when this event is detected.</p>
+          <h4 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-main)', marginBottom: '4px' }}>{event.label}</h4>
+          <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Triggers notification to students when this event is detected.</p>
         </div>
-        <div style={{ padding: '12px', background: '#f8fafc', borderRadius: '10px', border: '1px dashed #e2e8f0' }}>
-          <div style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '4px' }}>Trigger Rule</div>
-          <div style={{ fontSize: '13px', color: '#0f172a', fontWeight: 600 }}>{event.trigger}</div>
+        <div style={{ padding: '12px', background: 'var(--bg-dark)', borderRadius: '10px', border: '1px dashed var(--border)' }}>
+          <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '4px' }}>Trigger Rule</div>
+          <div style={{ fontSize: '13px', color: 'var(--text-main)', fontWeight: 600 }}>{event.trigger}</div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '8px' }}>
-          <span style={{ fontSize: '12px', color: '#64748b' }}>Status</span>
+          <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Status</span>
           <div
             onClick={() => onToggle(event.id)}
-            style={{ width: '40px', height: '20px', background: event.enabled ? '#059669' : '#cbd5e1', borderRadius: '20px', position: 'relative', cursor: 'pointer', transition: 'background 0.2s' }}
+            style={{ width: '40px', height: '20px', background: event.enabled ? '#10b981' : 'var(--border)', borderRadius: '20px', position: 'relative', cursor: 'pointer', transition: 'background 0.2s' }}
           >
-            <div style={{ width: '16px', height: '16px', background: '#fff', borderRadius: '50%', position: 'absolute', top: '2px', left: event.enabled ? 'calc(100% - 18px)' : '2px', transition: 'left 0.2s' }} />
+            <div style={{ width: '16px', height: '16px', background: '#ffffff', borderRadius: '50%', position: 'absolute', top: '2px', left: event.enabled ? 'calc(100% - 18px)' : '2px', transition: 'left 0.2s' }} />
           </div>
         </div>
       </div>
     ))}
     <div 
       onClick={() => onOpenModal('add_event')}
-      style={{ ...S.card, border: '2px dashed #e2e8f0', background: '#f8fafc', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px', cursor: 'pointer', minHeight: '220px' }}
+      style={{ ...S.card, border: '2px dashed var(--border)', background: 'var(--bg-dark)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px', cursor: 'pointer', minHeight: '220px' }}
     >
-      <div style={{ width: '40px', height: '40px', borderRadius: '50%', border: '2px solid #cbd5e1', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8' }}>
+      <div style={{ width: '40px', height: '40px', borderRadius: '50%', border: '2px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
         <Plus size={20} />
       </div>
-      <span style={{ fontSize: '14px', fontWeight: 600, color: '#94a3b8' }}>Define New Event Type</span>
+      <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-muted)' }}>Define New Event Type</span>
     </div>
   </div>
 );
@@ -631,14 +631,14 @@ const TemplateScreen = ({ templates, onOpenModal, onSave, onDelete }) => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      <div style={{ ...S.card, padding: '24px', background: 'linear-gradient(135deg, #f8fafc, #eff6ff)', border: '1px solid #bfdbfe' }}>
+      <div style={{ ...S.card, padding: '24px', background: 'rgba(37, 99, 235, 0.05)', border: '1px solid rgba(37, 99, 235, 0.2)' }}>
         <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-          <div style={{ width: '50px', height: '50px', background: '#fff', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(37,99,235,0.1)' }}>
-            <Zap size={24} color="#2563eb" />
+          <div style={{ width: '50px', height: '50px', background: 'var(--bg-card)', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--shadow-sm)' }}>
+            <Zap size={24} color="var(--primary)" />
           </div>
           <div>
-            <h4 style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a' }}>Dynamic Variables</h4>
-            <p style={{ fontSize: '13px', color: '#64748b' }}>Use these tags in your templates: <code style={{ color: '#2563eb', fontWeight: 700 }}>{"{{Name}}"}</code>, <code style={{ color: '#2563eb', fontWeight: 700 }}>{"{{Date}}"}</code>, <code style={{ color: '#2563eb', fontWeight: 700 }}>{"{{Course}}"}</code></p>
+            <h4 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-main)' }}>Dynamic Variables</h4>
+            <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Use these tags in your templates: <code style={{ color: 'var(--primary)', fontWeight: 700 }}>{"{{Name}}"}</code>, <code style={{ color: 'var(--primary)', fontWeight: 700 }}>{"{{Date}}"}</code>, <code style={{ color: 'var(--primary)', fontWeight: 700 }}>{"{{Course}}"}</code></p>
           </div>
         </div>
       </div>
@@ -647,32 +647,32 @@ const TemplateScreen = ({ templates, onOpenModal, onSave, onDelete }) => {
         {/* Template List */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {templates.map(t => (
-            <div key={t.id} onClick={() => setSelectedTemplate(t)} style={{ ...S.card, padding: '16px', cursor: 'pointer', border: selectedTemplate.id === t.id ? '1px solid #2563eb' : '1px solid #e2e8f0', background: selectedTemplate.id === t.id ? '#eff6ff' : '#fff' }}>
+            <div key={t.id} onClick={() => setSelectedTemplate(t)} style={{ ...S.card, padding: '16px', cursor: 'pointer', border: selectedTemplate.id === t.id ? '1px solid var(--primary)' : '1px solid var(--border)', background: selectedTemplate.id === t.id ? 'rgba(37, 99, 235, 0.05)' : 'var(--bg-card)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <span style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a' }}>{t.name}</span>
+                <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-main)' }}>{t.name}</span>
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <Edit2 size={14} color="#64748b" onClick={(e) => { e.stopPropagation(); onOpenModal('edit_template', t); }} />
-                  <Trash2 size={14} color="#dc2626" style={{ cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); onOpenModal('delete_confirm', { ...t, onDelete: onDelete }); }} />
+                  <Edit2 size={14} color="var(--text-muted)" onClick={(e) => { e.stopPropagation(); onOpenModal('edit_template', t); }} />
+                  <Trash2 size={14} color="#ef4444" style={{ cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); onOpenModal('delete_confirm', { ...t, onDelete: onDelete }); }} />
                 </div>
               </div>
-              <p style={{ fontSize: '12px', color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{t.subject}</p>
+              <p style={{ fontSize: '12px', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{t.subject}</p>
             </div>
           ))}
-          <button onClick={() => onOpenModal('edit_template')} style={{ padding: '12px', border: '1px dashed #cbd5e1', background: '#f8fafc', borderRadius: '12px', color: '#64748b', fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}>
+          <button onClick={() => onOpenModal('edit_template')} style={{ padding: '12px', border: '1px dashed var(--border)', background: 'var(--bg-dark)', borderRadius: '12px', color: 'var(--text-muted)', fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}>
             <Plus size={16} /> New Template
           </button>
         </div>
 
         {/* Editor/Preview */}
         <div style={{ ...S.card, display: 'flex', flexDirection: 'column' }}>
-          <div style={{ padding: '16px 20px', borderBottom: '1px solid #f1f5f9', background: '#f8fafc', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '13px', fontWeight: 700, color: '#0f172a' }}>Template Editor</span>
+          <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', background: 'var(--bg-dark)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-main)' }}>Template Editor</span>
             <button 
               onClick={() => {
                 onSave({ ...selectedTemplate, body: document.getElementById('template-body').value });
                 alert('Changes saved successfully!');
               }}
-              style={{ padding: '6px 12px', background: '#2563eb', color: '#fff', border: 'none', borderRadius: '6px', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
+              style={{ padding: '6px 12px', background: 'var(--primary)', color: 'var(--bg-app)', border: 'none', borderRadius: '6px', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
             >
               Save Changes
             </button>
@@ -704,13 +704,13 @@ const TemplateScreen = ({ templates, onOpenModal, onSave, onDelete }) => {
 const RulesScreen = ({ rules, onOpenModal, onDelete }) => (
   <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-      <div style={{ ...S.card, padding: '20px 24px', background: '#f8fafc', border: '1px solid #e2e8f0' }}>
+      <div style={{ ...S.card, padding: '20px 24px', background: 'var(--bg-dark)', border: '1px solid var(--border)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <Zap size={20} color="#2563eb" />
-            <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a' }}>Automation Rule Builder</h3>
+            <Zap size={20} color="var(--primary)" />
+            <h3 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-main)' }}>Automation Rule Builder</h3>
           </div>
-          <button onClick={() => onOpenModal('edit_rule')} style={{ padding: '8px 16px', background: '#2563eb', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>Create Rule</button>
+          <button onClick={() => onOpenModal('edit_rule')} style={{ padding: '8px 16px', background: 'var(--primary)', color: '#ffffff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>Create Rule</button>
         </div>
       </div>
 
@@ -718,28 +718,28 @@ const RulesScreen = ({ rules, onOpenModal, onDelete }) => (
         <div key={rule.id} style={{ ...S.card, padding: '20px 24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div style={{ display: 'flex', gap: '16px' }}>
-              <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: rule.status === 'Active' ? '#ecfdf5' : '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Play size={20} style={{ color: rule.status === 'Active' ? '#059669' : '#94a3b8' }} fill={rule.status === 'Active' ? '#059669' : 'none'} />
+              <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: rule.status === 'Active' ? 'rgba(16, 185, 129, 0.1)' : 'var(--bg-dark)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Play size={20} style={{ color: rule.status === 'Active' ? '#10b981' : 'var(--text-muted)' }} fill={rule.status === 'Active' ? '#10b981' : 'none'} />
               </div>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
-                  <h4 style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a' }}>{rule.name}</h4>
+                  <h4 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-main)' }}>{rule.name}</h4>
                   <span style={S.statusBadge(rule.status)}>{rule.status}</span>
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', alignItems: 'center' }}>
-                  <span style={{ fontSize: '12px', color: '#64748b' }}>If</span>
-                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#2563eb', background: '#eff6ff', padding: '2px 8px', borderRadius: '6px' }}>{rule.event}</span>
-                  <span style={{ fontSize: '12px', color: '#64748b' }}>and</span>
-                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a', background: '#f1f5f9', padding: '2px 8px', borderRadius: '6px' }}>{rule.condition}</span>
-                  <ChevronRight size={14} color="#cbd5e1" />
-                  <span style={{ fontSize: '12px', color: '#64748b' }}>Then</span>
-                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#7c3aed', background: '#f5f3ff', padding: '2px 8px', borderRadius: '6px' }}>{rule.action}</span>
+                  <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>If</span>
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--primary)', background: 'rgba(37, 99, 235, 0.1)', padding: '2px 8px', borderRadius: '6px' }}>{rule.event}</span>
+                  <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>and</span>
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-main)', background: 'var(--bg-dark)', padding: '2px 8px', borderRadius: '6px' }}>{rule.condition}</span>
+                  <ChevronRight size={14} color="var(--border)" />
+                  <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Then</span>
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#a855f7', background: 'rgba(168, 85, 247, 0.1)', padding: '2px 8px', borderRadius: '6px' }}>{rule.action}</span>
                 </div>
               </div>
             </div>
             <div style={{ display: 'flex', gap: '8px' }}>
-              <button onClick={() => onOpenModal('edit_rule', rule)} style={{ padding: '8px', borderRadius: '8px', border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer' }}><Edit2 size={14} color="#64748b" /></button>
-              <button onClick={() => onOpenModal('delete_confirm', { ...rule, onDelete: onDelete })} style={{ padding: '8px', borderRadius: '8px', border: '1px solid #fecaca', background: '#fef2f2', cursor: 'pointer' }}><Trash2 size={14} color="#dc2626" /></button>
+              <button onClick={() => onOpenModal('edit_rule', rule)} style={{ padding: '8px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--bg-card)', cursor: 'pointer' }}><Edit2 size={14} color="var(--text-muted)" /></button>
+              <button onClick={() => onOpenModal('delete_confirm', { ...rule, onDelete: onDelete })} style={{ padding: '8px', borderRadius: '8px', border: '1px solid rgba(239, 68, 68, 0.2)', background: 'rgba(239, 68, 68, 0.1)', cursor: 'pointer' }}><Trash2 size={14} color="#ef4444" /></button>
             </div>
           </div>
         </div>
@@ -748,12 +748,12 @@ const RulesScreen = ({ rules, onOpenModal, onDelete }) => (
 
     {/* Side Stats omitted for brevity or kept as is */}
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      <div style={{ ...S.card, padding: '24px', background: 'linear-gradient(135deg, #1e293b, #0f172a)', color: '#fff' }}>
-        <h4 style={{ fontSize: '14px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '20px' }}>Efficiency Gain</h4>
-        <div style={{ fontSize: '32px', fontWeight: 800, marginBottom: '8px' }}>+42%</div>
-        <p style={{ fontSize: '13px', color: '#94a3b8' }}>Automation has saved approximately 18 hours of manual work this week.</p>
-        <div style={{ marginTop: '24px', height: '6px', background: '#334155', borderRadius: '3px' }}>
-          <div style={{ width: '42%', height: '100%', background: '#2563eb', borderRadius: '3px', boxShadow: '0 0 12px rgba(37,99,235,0.5)' }} />
+      <div style={{ ...S.card, padding: '24px', background: 'var(--bg-dark)', color: 'var(--text-main)' }}>
+        <h4 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '20px' }}>Efficiency Gain</h4>
+        <div style={{ fontSize: '32px', fontWeight: 800, marginBottom: '8px', color: 'var(--primary)' }}>+42%</div>
+        <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Automation has saved approximately 18 hours of manual work this week.</p>
+        <div style={{ marginTop: '24px', height: '6px', background: 'var(--border)', borderRadius: '3px' }}>
+          <div style={{ width: '42%', height: '100%', background: 'var(--primary)', borderRadius: '3px', boxShadow: '0 0 12px rgba(37,99,235,0.3)' }} />
         </div>
       </div>
     </div>
@@ -762,12 +762,12 @@ const RulesScreen = ({ rules, onOpenModal, onDelete }) => (
 
 const LogsScreen = ({ logs, onExport, onOpenModal }) => (
   <div style={S.card}>
-    <div style={{ padding: '20px 24px', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       <div>
-        <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a' }}>Notification History</h3>
-        <p style={{ fontSize: '12px', color: '#94a3b8' }}>Track all automated communications</p>
+        <h3 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-main)' }}>Notification History</h3>
+        <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Track all automated communications</p>
       </div>
-      <button onClick={onExport} style={{ padding: '8px 16px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '13px', fontWeight: 600, color: '#64748b', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+      <button onClick={onExport} style={{ padding: '8px 16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
         <History size={16} /> Export Logs
       </button>
     </div>
@@ -779,26 +779,26 @@ const LogsScreen = ({ logs, onExport, onOpenModal }) => (
       </thead>
       <tbody>
         {logs.map((log, idx) => (
-          <tr key={log.id} style={{ background: idx % 2 === 0 ? '#fff' : '#fafbff' }}>
-            <td style={S.td}><span style={{ fontWeight: 600 }}>{log.recipient}</span></td>
+          <tr key={log.id} style={{ background: idx % 2 === 0 ? 'var(--bg-card)' : 'var(--bg-dark)' }}>
+            <td style={S.td}><span style={{ fontWeight: 600, color: 'var(--text-main)' }}>{log.recipient}</span></td>
             <td style={S.td}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                {log.type === 'Email' ? <Mail size={14} color="#2563eb" /> : <Zap size={14} color="#7c3aed" />}
+                {log.type === 'Email' ? <Mail size={14} color="var(--primary)" /> : <Zap size={14} color="#a855f7" />}
                 {log.type}
               </div>
             </td>
             <td style={S.td}>{log.event}</td>
             <td style={S.td}><span style={S.statusBadge(log.status)}>{log.status}</span></td>
-            <td style={S.td}><span style={{ color: '#94a3b8', fontSize: '12px' }}>{log.time}</span></td>
+            <td style={S.td}><span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>{log.time}</span></td>
             <td style={S.td}>
-              <button onClick={() => onOpenModal('payload', log)} style={{ border: 'none', background: 'transparent', color: '#2563eb', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}>View payload</button>
+              <button onClick={() => onOpenModal('payload', log)} style={{ border: 'none', background: 'transparent', color: 'var(--primary)', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}>View payload</button>
             </td>
           </tr>
         ))}
       </tbody>
     </table>
-    <div style={{ padding: '16px 24px', background: '#f8fafc', borderTop: '1px solid #f1f5f9', display: 'flex', justifyContent: 'center' }}>
-      <button style={{ background: 'transparent', border: 'none', color: '#94a3b8', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>Load More History</button>
+    <div style={{ padding: '16px 24px', background: 'var(--bg-dark)', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'center' }}>
+      <button style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>Load More History</button>
     </div>
   </div>
 );

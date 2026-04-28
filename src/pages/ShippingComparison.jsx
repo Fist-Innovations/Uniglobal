@@ -16,17 +16,17 @@ export default function ShippingComparison() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
-          <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#0f172a', marginBottom: '4px' }}>Shipping Management</h1>
-          <p style={{ fontSize: '14px', color: '#64748b' }}>Financial comparison, budget generation & GCC regional analytics</p>
+          <h1 style={{ fontSize: '24px', fontWeight: 800, color: 'var(--text-main)', marginBottom: '4px' }}>Shipping Management</h1>
+          <p style={{ fontSize: '14px', color: 'var(--text-muted)' }}>Financial comparison, budget generation & GCC regional analytics</p>
         </div>
-        <div style={{ display: 'flex', gap: '8px', padding: '4px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '14px' }}>
+        <div style={{ display: 'flex', gap: '8px', padding: '4px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '14px' }}>
           {TABS.map(t => (
             <button key={t.id} onClick={() => setTab(t.id)} style={{
               padding: '12px 24px', border: 'none', borderRadius: '10px', cursor: 'pointer',
               display: 'flex', alignItems: 'center', gap: '10px', transition: 'all 0.2s',
-              background: tab === t.id ? 'linear-gradient(to right,#1a56c4,#2563eb)' : 'transparent',
-              color: tab === t.id ? '#fff' : '#64748b',
-              boxShadow: tab === t.id ? '0 4px 12px rgba(37,99,235,0.25)' : 'none',
+              background: tab === t.id ? 'var(--primary)' : 'transparent',
+              color: tab === t.id ? '#ffffff' : 'var(--text-muted)',
+              boxShadow: tab === t.id ? '0 4px 12px rgba(0,0,0,0.2)' : 'none',
             }}>
               <t.icon size={18} />
               <div style={{ textAlign: 'left' }}>

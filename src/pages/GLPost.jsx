@@ -34,7 +34,7 @@ const fmtAmt = (n) => {
 };
 
 const S = {
-  card: { background: '#fff', borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' },
+  card: { background: 'var(--bg-card)', borderRadius: '16px', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)', transition: 'background 0.3s, border-color 0.3s' },
 };
 
 export default function GLPost() {
@@ -119,13 +119,13 @@ export default function GLPost() {
           <button
             onClick={() => navigate('/gl/confirm', { state: { txns } })}
             disabled={phase === 'posting'}
-            style={{ width: '38px', height: '38px', borderRadius: '10px', background: '#fff', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: phase === 'posting' ? 'not-allowed' : 'pointer', opacity: phase === 'posting' ? 0.5 : 1, padding: 0 }}
+            style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'var(--bg-card)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: phase === 'posting' ? 'not-allowed' : 'pointer', opacity: phase === 'posting' ? 0.5 : 1, padding: 0 }}
           >
-            <ChevronLeft size={22} color="#374151" style={{ flexShrink: 0 }} />
+            <ChevronLeft size={22} color="var(--text-main)" style={{ flexShrink: 0 }} />
           </button>
           <div>
-            <h1 style={{ fontSize: '21px', fontWeight: 800, color: '#0f172a', marginBottom: '2px' }}>Post to ERP</h1>
-            <p style={{ fontSize: '12.5px', color: '#94a3b8' }}>One-click posting · {selectedIds.size} of {txns.length} entries · Batch <strong style={{ color: '#2563eb' }}>{batchRef}</strong></p>
+            <h1 style={{ fontSize: '21px', fontWeight: 800, color: 'var(--text-main)', marginBottom: '2px' }}>Post to ERP</h1>
+            <p style={{ fontSize: '12.5px', color: 'var(--text-muted)' }}>One-click posting · {selectedIds.size} of {txns.length} entries · Batch <strong style={{ color: 'var(--primary)' }}>{batchRef}</strong></p>
           </div>
         </div>
         {phase === 'success' && (
@@ -138,13 +138,13 @@ export default function GLPost() {
       {/* ── Batch Summary Cards ── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
         {[
-          { label: 'Total Selected', val: selectedIds.size,                                             col: '#2563eb', bg: '#eff6ff' },
-          { label: 'Total Credits',  val: `$${totalCredit.toLocaleString('en-US',{minimumFractionDigits:2})}`, col: '#059669', bg: '#ecfdf5' },
-          { label: 'Total Debits',   val: `$${totalDebit.toLocaleString('en-US',{minimumFractionDigits:2})}`,  col: '#dc2626', bg: '#fef2f2' },
-          { label: 'Batch Reference',val: batchRef,                                                col: '#7c3aed', bg: '#f5f3ff' },
+          { label: 'Total Selected', val: selectedIds.size,                                             col: 'var(--primary)', bg: 'rgba(37, 99, 235, 0.1)' },
+          { label: 'Total Credits',  val: `$${totalCredit.toLocaleString('en-US',{minimumFractionDigits:2})}`, col: '#10b981', bg: 'rgba(16, 185, 129, 0.1)' },
+          { label: 'Total Debits',   val: `$${totalDebit.toLocaleString('en-US',{minimumFractionDigits:2})}`,  col: '#ef4444', bg: 'rgba(239, 68, 68, 0.1)' },
+          { label: 'Batch Reference',val: batchRef,                                                col: '#a855f7', bg: 'rgba(168, 85, 247, 0.1)' },
         ].map(s => (
-          <div key={s.label} style={{ ...S.card, padding: '18px 20px' }}>
-            <p style={{ fontSize: '10.5px', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '6px' }}>{s.label}</p>
+          <div key={s.label} style={{ ...S.card, padding: '18px 20px', background: 'var(--bg-card)' }}>
+            <p style={{ fontSize: '10.5px', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '6px' }}>{s.label}</p>
             <p style={{ fontSize: s.label === 'Batch Reference' ? '16px' : '22px', fontWeight: 800, color: s.col }}>{s.val}</p>
           </div>
         ))}
@@ -166,31 +166,31 @@ export default function GLPost() {
               )}
               {phase === 'posting' && (
                 <motion.div key="posting" initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }}
-                  style={{ width: '80px', height: '80px', borderRadius: '22px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', boxShadow: '0 8px 20px rgba(37,99,235,0.15)' }}>
-                  <Loader2 size={36} color="#2563eb" className="animate-spin" style={{ animation: 'spin 1s linear infinite' }} />
+                  style={{ width: '80px', height: '80px', borderRadius: '22px', background: 'rgba(37, 99, 235, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', boxShadow: 'var(--shadow-sm)' }}>
+                  <Loader2 size={36} color="var(--primary)" className="animate-spin" style={{ animation: 'spin 1s linear infinite' }} />
                 </motion.div>
               )}
               {phase === 'success' && (
                 <motion.div key="success" initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 200 }}
-                  style={{ width: '80px', height: '80px', borderRadius: '22px', background: '#ecfdf5', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', boxShadow: '0 8px 20px rgba(5,150,105,0.2)' }}>
-                  <CheckCircle2 size={40} color="#059669" />
+                  style={{ width: '80px', height: '80px', borderRadius: '22px', background: 'rgba(16, 185, 129, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', boxShadow: '0 8px 20px rgba(16, 185, 129, 0.2)' }}>
+                  <CheckCircle2 size={40} color="#10b981" />
                 </motion.div>
               )}
               {phase === 'failed' && (
                 <motion.div key="failed" initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 200 }}
-                  style={{ width: '80px', height: '80px', borderRadius: '22px', background: '#fef2f2', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', boxShadow: '0 8px 20px rgba(220,38,38,0.2)' }}>
-                  <XCircle size={40} color="#dc2626" />
+                  style={{ width: '80px', height: '80px', borderRadius: '22px', background: 'rgba(239, 68, 68, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', boxShadow: '0 8px 20px rgba(239, 68, 68, 0.2)' }}>
+                  <XCircle size={40} color="#ef4444" />
                 </motion.div>
               )}
             </AnimatePresence>
 
-            <h2 style={{ fontSize: '18px', fontWeight: 800, color: '#0f172a', marginBottom: '6px' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-main)', marginBottom: '6px' }}>
               {phase === 'idle'    ? 'Ready to Post'         : ''}
               {phase === 'posting' ? 'Posting in Progress…'  : ''}
               {phase === 'success' ? 'Posted Successfully!'  : ''}
               {phase === 'failed'  ? 'Posting Failed'        : ''}
             </h2>
-            <p style={{ fontSize: '13px', color: '#64748b', maxWidth: '280px', margin: '0 auto' }}>
+            <p style={{ fontSize: '13px', color: 'var(--text-muted)', maxWidth: '280px', margin: '0 auto' }}>
               {phase === 'idle'    ? `${selectedIds.size} entries will be written to the ERP general ledger.` : ''}
               {phase === 'posting' ? 'Please do not close this window while posting is in progress.' : ''}
               {phase === 'success' ? `All ${selectedIds.size} journal entries synced. Ref: ${batchRef}` : ''}
@@ -202,7 +202,7 @@ export default function GLPost() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {(phase === 'idle' || phase === 'failed') && (
               <button onClick={() => runPost(false)} disabled={selectedIds.size === 0}
-                style={{ width: '100%', padding: '14px', background: selectedIds.size === 0 ? '#f1f5f9' : 'linear-gradient(to right,#0f172a,#1e293b)', border: 'none', borderRadius: '12px', fontSize: '14px', fontWeight: 700, color: selectedIds.size === 0 ? '#94a3b8' : '#fff', cursor: selectedIds.size === 0 ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '9px', boxShadow: selectedIds.size > 0 ? '0 6px 20px rgba(15,23,42,0.3)' : 'none', transition: 'transform 0.1s' }}
+                style={{ width: '100%', padding: '14px', background: selectedIds.size === 0 ? 'var(--bg-dark)' : 'var(--text-main)', border: selectedIds.size === 0 ? '1px solid var(--border)' : 'none', borderRadius: '12px', fontSize: '14px', fontWeight: 700, color: selectedIds.size === 0 ? 'var(--text-muted)' : 'var(--bg-card)', cursor: selectedIds.size === 0 ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '9px', boxShadow: selectedIds.size > 0 ? '0 6px 20px rgba(0,0,0,0.2)' : 'none', transition: 'transform 0.1s' }}
                 onMouseDown={e => e.currentTarget.style.transform = 'scale(0.98)'}
                 onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
               >
@@ -212,13 +212,13 @@ export default function GLPost() {
             )}
             {phase === 'idle' && (
               <button onClick={() => runPost(true)}
-                style={{ width: '100%', padding: '11px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '12px', fontSize: '12px', fontWeight: 600, color: '#dc2626', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '7px' }}>
+                style={{ width: '100%', padding: '11px', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '12px', fontSize: '12px', fontWeight: 600, color: '#ef4444', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '7px' }}>
                 <AlertTriangle size={13} /> Simulate Failure (Demo)
               </button>
             )}
             {phase === 'success' && (
               <button onClick={() => navigate('/gl/upload')}
-                style={{ width: '100%', padding: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', fontSize: '13px', fontWeight: 600, color: '#475569', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '7px' }}>
+                style={{ width: '100%', padding: '12px', background: 'var(--bg-dark)', border: '1px solid var(--border)', borderRadius: '12px', fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '7px' }}>
                 <UploadCloud size={14} /> Upload Another Statement
               </button>
             )}
@@ -227,7 +227,7 @@ export default function GLPost() {
 
         {/* Right: Step Log */}
         <div style={{ ...S.card, padding: '24px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-          <p style={{ fontSize: '12px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '14px' }}>Posting Log</p>
+          <p style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '14px' }}>Posting Log</p>
 
           {STEPS.map((step, i) => {
             const done    = isCompleted(step.key);
@@ -244,32 +244,32 @@ export default function GLPost() {
                 style={{
                   display: 'flex', alignItems: 'center', gap: '14px',
                   padding: '13px 16px', borderRadius: '12px',
-                  background: done ? '#f0fdf4' : failed ? '#fef2f2' : current ? '#eff6ff' : '#f8fafc',
-                  border: `1px solid ${done ? '#bbf7d0' : failed ? '#fecaca' : current ? '#bfdbfe' : '#e2e8f0'}`,
+                  background: done ? 'rgba(16, 185, 129, 0.05)' : failed ? 'rgba(239, 68, 68, 0.05)' : current ? 'rgba(37, 99, 235, 0.05)' : 'var(--bg-dark)',
+                  border: `1px solid ${done ? 'rgba(16, 185, 129, 0.2)' : failed ? 'rgba(239, 68, 68, 0.2)' : current ? 'rgba(37, 99, 235, 0.2)' : 'var(--border)'}`,
                   transition: 'all 0.3s',
                 }}>
                 {/* Status icon */}
-                <div style={{ width: '32px', height: '32px', borderRadius: '8px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: done ? '#dcfce7' : failed ? '#fee2e2' : current ? '#dbeafe' : '#f1f5f9' }}>
-                  {done    && <CheckCircle2 size={16} color="#059669" />}
-                  {failed  && <XCircle size={16} color="#dc2626" />}
-                  {current && <Loader2 size={16} color="#2563eb" style={{ animation: 'spin 1s linear infinite' }} />}
-                  {(waiting || isIdle) && <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#cbd5e1', display: 'block' }} />}
+                <div style={{ width: '32px', height: '32px', borderRadius: '8px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: done ? 'rgba(16, 185, 129, 0.1)' : failed ? 'rgba(239, 68, 68, 0.1)' : current ? 'rgba(37, 99, 235, 0.1)' : 'var(--bg-card)' }}>
+                  {done    && <CheckCircle2 size={16} color="#10b981" />}
+                  {failed  && <XCircle size={16} color="#ef4444" />}
+                  {current && <Loader2 size={16} color="var(--primary)" style={{ animation: 'spin 1s linear infinite' }} />}
+                  {(waiting || isIdle) && <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--border)', display: 'block' }} />}
                 </div>
 
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: '13px', fontWeight: 700, color: done ? '#059669' : failed ? '#dc2626' : current ? '#1d4ed8' : '#94a3b8', marginBottom: '2px' }}>
+                  <p style={{ fontSize: '13px', fontWeight: 700, color: done ? '#10b981' : failed ? '#ef4444' : current ? 'var(--primary)' : 'var(--text-muted)', marginBottom: '2px' }}>
                     {step.label}
                   </p>
-                  <p style={{ fontSize: '11.5px', color: done ? '#16a34a' : failed ? '#b91c1c' : current ? '#3b82f6' : '#cbd5e1', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  <p style={{ fontSize: '11.5px', color: done ? '#10b981' : failed ? '#ef4444' : current ? 'var(--primary)' : 'var(--text-muted)', opacity: current || done || failed ? 0.8 : 0.5, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {done ? '✓ Completed' : failed ? '✗ ' + step.detail : current ? step.detail : step.detail}
                   </p>
                 </div>
 
                 {done && (
-                  <span style={{ fontSize: '10.5px', fontWeight: 700, color: '#059669', background: '#dcfce7', padding: '2px 8px', borderRadius: '10px', whiteSpace: 'nowrap' }}>OK</span>
+                  <span style={{ fontSize: '10.5px', fontWeight: 700, color: '#10b981', background: 'rgba(16, 185, 129, 0.1)', padding: '2px 8px', borderRadius: '10px', whiteSpace: 'nowrap' }}>OK</span>
                 )}
                 {failed && (
-                  <span style={{ fontSize: '10.5px', fontWeight: 700, color: '#dc2626', background: '#fee2e2', padding: '2px 8px', borderRadius: '10px', whiteSpace: 'nowrap' }}>ERR</span>
+                  <span style={{ fontSize: '10.5px', fontWeight: 700, color: '#ef4444', background: 'rgba(239, 68, 68, 0.1)', padding: '2px 8px', borderRadius: '10px', whiteSpace: 'nowrap' }}>ERR</span>
                 )}
               </motion.div>
             );
@@ -279,8 +279,8 @@ export default function GLPost() {
           <AnimatePresence>
             {phase === 'success' && (
               <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-                style={{ marginTop: '10px', padding: '14px 16px', background: '#ecfdf5', borderRadius: '12px', border: '1px solid #bbf7d0' }}>
-                <p style={{ fontSize: '11px', fontWeight: 700, color: '#064e3b', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>Batch Summary</p>
+                style={{ marginTop: '10px', padding: '14px 16px', background: 'rgba(16, 185, 129, 0.05)', borderRadius: '12px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+                <p style={{ fontSize: '11px', fontWeight: 700, color: '#10b981', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>Batch Summary</p>
                 {[
                   ['Batch Reference', batchRef],
                   ['Entries Posted',  `${selectedIds.size} journal entries`],
@@ -289,8 +289,8 @@ export default function GLPost() {
                   ['Posted At',       new Date().toLocaleString()],
                 ].map(([k, v]) => (
                   <div key={k} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '5px' }}>
-                    <span style={{ color: '#065f46' }}>{k}</span>
-                    <span style={{ fontWeight: 700, color: '#059669' }}>{v}</span>
+                    <span style={{ color: 'var(--text-muted)' }}>{k}</span>
+                    <span style={{ fontWeight: 700, color: '#10b981' }}>{v}</span>
                   </div>
                 ))}
               </motion.div>
@@ -301,12 +301,12 @@ export default function GLPost() {
           <AnimatePresence>
             {phase === 'failed' && (
               <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-                style={{ marginTop: '10px', padding: '14px 16px', background: '#fef2f2', borderRadius: '12px', border: '1px solid #fecaca' }}>
+                style={{ marginTop: '10px', padding: '14px 16px', background: 'rgba(239, 68, 68, 0.05)', borderRadius: '12px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                  <AlertTriangle size={14} color="#dc2626" />
-                  <p style={{ fontSize: '12px', fontWeight: 700, color: '#991b1b' }}>Posting Halted</p>
+                  <AlertTriangle size={14} color="#ef4444" />
+                  <p style={{ fontSize: '12px', fontWeight: 700, color: '#ef4444' }}>Posting Halted</p>
                 </div>
-                <p style={{ fontSize: '12px', color: '#b91c1c' }}>
+                <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
                   The process was interrupted at <strong>{STEPS.find(s => s.key === failedStep)?.label}</strong>. No entries have been committed to the ERP. Please retry or contact your ERP administrator.
                 </p>
               </motion.div>
@@ -317,42 +317,42 @@ export default function GLPost() {
 
       {/* ── Entry Preview Table ── */}
       <div style={{ ...S.card, overflow: 'hidden' }}>
-        <div style={{ padding: '16px 20px', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <p style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a' }}>Entries Queued for Posting</p>
-          <span style={{ fontSize: '12px', color: '#94a3b8' }}>{txns.length} entries</span>
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <p style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-main)' }}>Entries Queued for Posting</p>
+          <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{txns.length} entries</span>
         </div>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr>
-                <th style={{ padding: '11px 18px', width: '40px', background: '#f8fafc' }}>
-                  <input type="checkbox" checked={txns.length > 0 && selectedIds.size === txns.length} onChange={toggleSelectAll} disabled={phase !== 'idle' && phase !== 'failed'} style={{ cursor: 'pointer', width: '15px', height: '15px', accentColor: '#2563eb' }} />
+                <th style={{ padding: '11px 18px', width: '40px', background: 'var(--bg-dark)' }}>
+                  <input type="checkbox" checked={txns.length > 0 && selectedIds.size === txns.length} onChange={toggleSelectAll} disabled={phase !== 'idle' && phase !== 'failed'} style={{ cursor: 'pointer', width: '15px', height: '15px', accentColor: 'var(--primary)' }} />
                 </th>
                 {['#', 'Date', 'Description', 'GL Account', 'Amount', 'Status'].map(h => (
-                  <th key={h} style={{ padding: '11px 18px', fontSize: '10.5px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.8px', background: '#f8fafc', textAlign: 'left', whiteSpace: 'nowrap' }}>{h}</th>
+                  <th key={h} style={{ padding: '11px 18px', fontSize: '10.5px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.8px', background: 'var(--bg-dark)', textAlign: 'left', whiteSpace: 'nowrap' }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {txns.map((t, i) => (
-                <tr key={t.id} style={{ background: selectedIds.has(t.id) ? '#eff6ff' : i % 2 === 0 ? '#fff' : '#fafbff', opacity: phase !== 'idle' && phase !== 'failed' && !selectedIds.has(t.id) ? 0.5 : 1 }}>
+                <tr key={t.id} style={{ background: selectedIds.has(t.id) ? 'rgba(37, 99, 235, 0.05)' : i % 2 === 0 ? 'var(--bg-card)' : 'var(--bg-dark)', opacity: phase !== 'idle' && phase !== 'failed' && !selectedIds.has(t.id) ? 0.5 : 1 }}>
                   <td style={{ padding: '13px 18px' }}>
-                    <input type="checkbox" checked={selectedIds.has(t.id)} onChange={() => toggleSelect(t.id)} disabled={phase !== 'idle' && phase !== 'failed'} style={{ cursor: 'pointer', width: '15px', height: '15px', accentColor: '#2563eb' }} />
+                    <input type="checkbox" checked={selectedIds.has(t.id)} onChange={() => toggleSelect(t.id)} disabled={phase !== 'idle' && phase !== 'failed'} style={{ cursor: 'pointer', width: '15px', height: '15px', accentColor: 'var(--primary)' }} />
                   </td>
-                  <td style={{ padding: '13px 18px', fontSize: '12px', color: '#94a3b8', fontWeight: 600 }}>{String(i + 1).padStart(2, '0')}</td>
-                  <td style={{ padding: '13px 18px', fontSize: '13px', color: '#64748b', whiteSpace: 'nowrap' }}>{t.date}</td>
-                  <td style={{ padding: '13px 18px', fontSize: '13px', color: '#0f172a', fontWeight: 600, maxWidth: '260px' }}>{t.desc}</td>
-                  <td style={{ padding: '13px 18px', fontSize: '12.5px', color: '#1e40af', fontWeight: 600, whiteSpace: 'nowrap' }}>{t.gl}</td>
-                  <td style={{ padding: '13px 18px', fontSize: '13px', fontWeight: 700, whiteSpace: 'nowrap', color: t.amt >= 0 ? '#059669' : '#0f172a' }}>{fmtAmt(t.amt)}</td>
+                  <td style={{ padding: '13px 18px', fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600 }}>{String(i + 1).padStart(2, '0')}</td>
+                  <td style={{ padding: '13px 18px', fontSize: '13px', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>{t.date}</td>
+                  <td style={{ padding: '13px 18px', fontSize: '13px', color: 'var(--text-main)', fontWeight: 600, maxWidth: '260px' }}>{t.desc}</td>
+                  <td style={{ padding: '13px 18px', fontSize: '12.5px', color: 'var(--primary)', fontWeight: 600, whiteSpace: 'nowrap' }}>{t.gl}</td>
+                  <td style={{ padding: '13px 18px', fontSize: '13px', fontWeight: 700, whiteSpace: 'nowrap', color: t.amt >= 0 ? '#10b981' : 'var(--text-main)' }}>{fmtAmt(t.amt)}</td>
                   <td style={{ padding: '13px 18px' }}>
                     <span style={{
                       display: 'inline-flex', alignItems: 'center', gap: '5px',
                       padding: '3px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: 700,
-                      background: phase === 'success' ? '#ecfdf5' : phase === 'failed' && isCompleted(t.id?.toString()) ? '#ecfdf5' : '#f0f9ff',
-                      color: phase === 'success' ? '#059669' : '#0284c7',
-                      border: `1px solid ${phase === 'success' ? '#bbf7d0' : '#bae6fd'}`,
+                      background: phase === 'success' ? 'rgba(16, 185, 129, 0.1)' : phase === 'failed' && isCompleted(t.id?.toString()) ? 'rgba(16, 185, 129, 0.1)' : 'rgba(2, 132, 199, 0.1)',
+                      color: phase === 'success' ? '#10b981' : '#0ea5e9',
+                      border: `1px solid ${phase === 'success' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(14, 165, 233, 0.2)'}`,
                     }}>
-                      <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: phase === 'success' ? '#059669' : '#0284c7' }} />
+                      <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: phase === 'success' ? '#10b981' : '#0ea5e9' }} />
                       {phase === 'success' ? 'Posted' : t.status}
                     </span>
                   </td>

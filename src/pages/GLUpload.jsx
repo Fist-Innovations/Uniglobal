@@ -11,15 +11,15 @@ const INITIAL_FILES = [
 ];
 
 const statusStyle = {
-  Processed: { bg: '#ecfdf5', color: '#059669', dot: '#059669' },
-  Review:    { bg: '#fff7ed', color: '#d97706', dot: '#d97706' },
-  Pending:   { bg: '#f0f9ff', color: '#0284c7', dot: '#0284c7' },
+  Processed: { bg: 'rgba(5, 150, 105, 0.1)', color: '#10b981', dot: '#10b981' },
+  Review:    { bg: 'rgba(217, 119, 6, 0.1)', color: '#f59e0b', dot: '#f59e0b' },
+  Pending:   { bg: 'rgba(2, 132, 199, 0.1)', color: '#0ea5e9', dot: '#0ea5e9' },
 };
 
 const S = {
-  card: { background: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' },
-  th: { padding: '12px 20px', fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.8px', background: '#f8fafc', textAlign: 'left' },
-  td: { padding: '14px 20px', fontSize: '13px', color: '#374151', borderBottom: '1px solid #f8fafc' },
+  card: { background: 'var(--bg-card)', borderRadius: '16px', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)', transition: 'background 0.3s, border-color 0.3s' },
+  th: { padding: '12px 20px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.8px', background: 'var(--bg-dark)', textAlign: 'left' },
+  td: { padding: '14px 20px', fontSize: '13px', color: 'var(--text-main)', borderBottom: '1px solid var(--border)' },
 };
 
 const GLUpload = () => {
@@ -75,8 +75,8 @@ const GLUpload = () => {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h1 style={{ fontSize: '22px', fontWeight: 800, color: '#0f172a', marginBottom: '2px' }}>GL Bank Upload</h1>
-          <p style={{ fontSize: '13px', color: '#94a3b8' }}>Upload bank statements for AI-powered GL mapping</p>
+          <h1 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-main)', marginBottom: '2px' }}>GL Bank Upload</h1>
+          <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Upload bank statements for AI-powered GL mapping</p>
         </div>
         <input type="file" ref={fileInputRef} onChange={handleFileSelect} style={{ display: 'none' }} accept=".csv,.xlsx,.xls,.pdf" />
         <button 
@@ -103,18 +103,18 @@ const GLUpload = () => {
         style={{
           ...S.card,
           padding: '48px 32px',
-          border: `2px dashed ${dragging ? '#2563eb' : '#e2e8f0'}`,
-          background: dragging ? '#eff6ff' : '#fafbff',
+          border: `2px dashed ${dragging ? 'var(--primary)' : 'var(--border)'}`,
+          background: dragging ? 'rgba(37, 99, 235, 0.05)' : 'var(--bg-dark)',
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
           gap: '12px', cursor: 'pointer', transition: 'all 0.2s', textAlign: 'center',
         }}
       >
-        <div style={{ width: '60px', height: '60px', borderRadius: '16px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <UploadCloud size={28} style={{ color: '#2563eb' }} />
+        <div style={{ width: '60px', height: '60px', borderRadius: '16px', background: 'rgba(37, 99, 235, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <UploadCloud size={28} style={{ color: 'var(--primary)' }} />
         </div>
         <div>
-          <p style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', marginBottom: '4px' }}>Drag & drop your bank statement</p>
-          <p style={{ fontSize: '12.5px', color: '#94a3b8' }}>Supports .xlsx, .csv, .pdf · Max 50MB</p>
+          <p style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-main)', marginBottom: '4px' }}>Drag & drop your bank statement</p>
+          <p style={{ fontSize: '12.5px', color: 'var(--text-muted)' }}>Supports .xlsx, .csv, .pdf · Max 50MB</p>
         </div>
         <button 
           onClick={triggerFileInput}
@@ -144,8 +144,8 @@ const GLUpload = () => {
               <s.icon size={18} style={{ color: s.col }} />
             </div>
             <div>
-              <p style={{ fontSize: '11px', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{s.label}</p>
-              <p style={{ fontSize: '18px', fontWeight: 800, color: '#0f172a' }}>{s.val}</p>
+              <p style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{s.label}</p>
+              <p style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-main)' }}>{s.val}</p>
             </div>
           </div>
         ))}
@@ -153,10 +153,10 @@ const GLUpload = () => {
 
       {/* History Table */}
       <div style={{ ...S.card, overflow: 'hidden' }}>
-        <div style={{ padding: '20px 24px', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <p style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a' }}>Upload History</p>
-            <p style={{ fontSize: '12px', color: '#94a3b8' }}>{fileList.length} files total</p>
+            <p style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-main)' }}>Upload History</p>
+            <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{fileList.length} files total</p>
           </div>
         </div>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -176,14 +176,14 @@ const GLUpload = () => {
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0, display: 'none' }}
                   transition={{ duration: 0.2 }}
-                  style={{ background: i % 2 === 0 ? '#fff' : '#fafbff' }}
+                  style={{ background: i % 2 === 0 ? 'var(--bg-card)' : 'var(--bg-dark)' }}
                 >
                   <td style={S.td}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <FileText size={14} style={{ color: '#2563eb' }} />
+                      <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(37, 99, 235, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <FileText size={14} style={{ color: 'var(--primary)' }} />
                       </div>
-                      <span style={{ fontWeight: 600, color: '#0f172a', fontSize: '13px' }}>{f.name}</span>
+                      <span style={{ fontWeight: 600, color: 'var(--text-main)', fontSize: '13px' }}>{f.name}</span>
                     </div>
                   </td>
                   <td style={S.td}>{f.date}</td>
@@ -201,8 +201,8 @@ const GLUpload = () => {
                     </span>
                   </td>
                   <td style={{ ...S.td, display: 'flex', gap: '8px', alignItems: 'center' }}>
-                    <button onClick={() => setReviewFile(f)} style={{ padding: '5px 12px', background: '#eff6ff', border: 'none', borderRadius: '7px', fontSize: '11px', fontWeight: 600, color: '#2563eb', cursor: 'pointer' }}>Review</button>
-                    <button onClick={() => handleDelete(f.id)} style={{ padding: '5px 8px', background: '#fef2f2', border: 'none', borderRadius: '7px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+                    <button onClick={() => setReviewFile(f)} style={{ padding: '5px 12px', background: 'rgba(37, 99, 235, 0.1)', border: 'none', borderRadius: '7px', fontSize: '11px', fontWeight: 600, color: 'var(--primary)', cursor: 'pointer' }}>Review</button>
+                    <button onClick={() => handleDelete(f.id)} style={{ padding: '5px 8px', background: 'rgba(239, 68, 68, 0.1)', border: 'none', borderRadius: '7px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
                       <Trash2 size={13} style={{ color: '#dc2626' }} />
                     </button>
                   </td>
@@ -221,33 +221,33 @@ const GLUpload = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              style={{ background: '#fff', borderRadius: '16px', padding: '24px', width: '100%', maxWidth: '500px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}
+              style={{ background: 'var(--bg-card)', borderRadius: '16px', padding: '24px', width: '100%', maxWidth: '500px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)', border: '1px solid var(--border)' }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <FileText size={20} color="#2563eb" /> Review Document
+                <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <FileText size={20} color="var(--primary)" /> Review Document
                 </h3>
-                <button onClick={() => setReviewFile(null)} style={{ background: '#f8fafc', border: 'none', cursor: 'pointer', padding: '6px', borderRadius: '50%', color: '#94a3b8' }}>
+                <button onClick={() => setReviewFile(null)} style={{ background: 'var(--bg-dark)', border: 'none', cursor: 'pointer', padding: '6px', borderRadius: '50%', color: 'var(--text-muted)' }}>
                   ✕
                 </button>
               </div>
 
-              <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '16px', marginBottom: '20px' }}>
+              <div style={{ background: 'var(--bg-dark)', border: '1px solid var(--border)', borderRadius: '12px', padding: '16px', marginBottom: '20px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>File Name</span>
-                  <span style={{ fontSize: '13px', color: '#0f172a', fontWeight: 700 }}>{reviewFile.name}</span>
+                  <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600 }}>File Name</span>
+                  <span style={{ fontSize: '13px', color: 'var(--text-main)', fontWeight: 700 }}>{reviewFile.name}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>Upload Date</span>
-                  <span style={{ fontSize: '13px', color: '#0f172a', fontWeight: 600 }}>{reviewFile.date}</span>
+                  <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600 }}>Upload Date</span>
+                  <span style={{ fontSize: '13px', color: 'var(--text-main)', fontWeight: 600 }}>{reviewFile.date}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>File Size</span>
-                  <span style={{ fontSize: '13px', color: '#0f172a', fontWeight: 600 }}>{reviewFile.size}</span>
+                  <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600 }}>File Size</span>
+                  <span style={{ fontSize: '13px', color: 'var(--text-main)', fontWeight: 600 }}>{reviewFile.size}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>Detected Rows</span>
-                  <span style={{ fontSize: '13px', color: '#0f172a', fontWeight: 700, color: '#2563eb' }}>{reviewFile.rows}</span>
+                  <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600 }}>Detected Rows</span>
+                  <span style={{ fontSize: '13px', color: 'var(--primary)', fontWeight: 700 }}>{reviewFile.rows}</span>
                 </div>
               </div>
 
@@ -261,7 +261,7 @@ const GLUpload = () => {
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
-                <button onClick={() => setReviewFile(null)} style={{ padding: '10px 16px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '13px', fontWeight: 600, color: '#64748b', cursor: 'pointer' }}>Cancel</button>
+                <button onClick={() => setReviewFile(null)} style={{ padding: '10px 16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)', cursor: 'pointer' }}>Cancel</button>
                 <button onClick={() => navigate('/gl/review')} style={{ padding: '10px 20px', background: 'linear-gradient(to right, #1a56c4, #2563eb)', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 700, color: 'white', cursor: 'pointer', boxShadow: '0 4px 12px rgba(37,99,235,0.25)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   Open in Transaction Review →
                 </button>
@@ -279,30 +279,30 @@ const GLUpload = () => {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              style={{ background: '#fff', borderRadius: '20px', padding: '32px', width: '100%', maxWidth: '440px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', textAlign: 'center' }}
+              style={{ background: 'var(--bg-card)', borderRadius: '20px', padding: '32px', width: '100%', maxWidth: '440px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', textAlign: 'center', border: '1px solid var(--border)' }}
             >
-              <div style={{ width: '64px', height: '64px', borderRadius: '18px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
-                <FileText size={32} color="#2563eb" />
+              <div style={{ width: '64px', height: '64px', borderRadius: '18px', background: 'rgba(37, 99, 235, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+                <FileText size={32} color="var(--primary)" />
               </div>
               
-              <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>Confirm Upload</h3>
-              <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '24px' }}>Are you sure you want to upload this bank statement for processing?</p>
+              <h3 style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-main)', marginBottom: '8px' }}>Confirm Upload</h3>
+              <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '24px' }}>Are you sure you want to upload this bank statement for processing?</p>
               
-              <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '16px', marginBottom: '28px', textAlign: 'left' }}>
+              <div style={{ background: 'var(--bg-dark)', border: '1px solid var(--border)', borderRadius: '12px', padding: '16px', marginBottom: '28px', textAlign: 'left' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase' }}>File Name</span>
-                  <span style={{ fontSize: '13px', color: '#0f172a', fontWeight: 700, maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{pendingFile.name}</span>
+                  <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>File Name</span>
+                  <span style={{ fontSize: '13px', color: 'var(--text-main)', fontWeight: 700, maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{pendingFile.name}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase' }}>Size</span>
-                  <span style={{ fontSize: '13px', color: '#0f172a', fontWeight: 600 }}>{(pendingFile.size / (1024 * 1024)).toFixed(2)} MB</span>
+                  <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>Size</span>
+                  <span style={{ fontSize: '13px', color: 'var(--text-main)', fontWeight: 600 }}>{(pendingFile.size / (1024 * 1024)).toFixed(2)} MB</span>
                 </div>
               </div>
               
               <div style={{ display: 'flex', gap: '12px' }}>
                 <button 
                   onClick={() => { setShowConfirmModal(false); setPendingFile(null); }}
-                  style={{ flex: 1, padding: '12px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px', fontSize: '14px', fontWeight: 600, color: '#64748b', cursor: 'pointer' }}
+                  style={{ flex: 1, padding: '12px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', fontSize: '14px', fontWeight: 600, color: 'var(--text-muted)', cursor: 'pointer' }}
                 >
                   Cancel
                 </button>

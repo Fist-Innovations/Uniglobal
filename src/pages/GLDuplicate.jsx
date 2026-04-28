@@ -4,12 +4,12 @@ import { Plus, AlertTriangle, CheckCircle2, Search, Filter, X, FileWarning, Cloc
 import * as XLSX from 'xlsx';
 
 const S = {
-  card: { background: '#fff', borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' },
-  th: { padding: '13px 18px', fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.8px', background: '#f8fafc', textAlign: 'left' },
-  td: { padding: '14px 18px', fontSize: '13px', color: '#374151', borderBottom: '1px solid #f8fafc' },
-  label: { display: 'block', fontSize: '11px', fontWeight: 700, color: '#64748b', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' },
-  input: { width: '100%', padding: '11px 14px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '14px', outline: 'none', boxSizing: 'border-box', background: '#fff', transition: 'border-color 0.2s' },
-  badge: (c) => ({ padding: '3px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: 700, background: c + '18', color: c }),
+  card: { background: 'var(--bg-card)', borderRadius: '16px', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)', transition: 'background 0.3s, border-color 0.3s' },
+  th: { padding: '13px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.8px', background: 'var(--bg-dark)', textAlign: 'left' },
+  td: { padding: '14px 18px', fontSize: '13px', color: 'var(--text-main)', borderBottom: '1px solid var(--border)' },
+  label: { display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' },
+  input: { width: '100%', padding: '11px 14px', borderRadius: '10px', border: '1px solid var(--border)', fontSize: '14px', outline: 'none', boxSizing: 'border-box', background: 'var(--bg-dark)', color: 'var(--text-main)', transition: 'border-color 0.2s' },
+  badge: (c) => ({ padding: '3px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: 700, background: 'rgba(' + c + ', 0.1)', color: 'rgb(' + c + ')' }),
 };
 
 const ALL_DUPLICATES = [
@@ -25,8 +25,8 @@ const VIEWS = [
   { id: 'report', label: '2. Report',      icon: FileWarning },
 ];
 
-const confColor = (c) => c >= 90 ? '#dc2626' : c >= 70 ? '#f59e0b' : '#2563eb';
-const statusColor = { Flagged: '#dc2626', Review: '#f59e0b', Resolved: '#059669' };
+const confColor = (c) => c >= 90 ? '#ef4444' : c >= 70 ? '#f59e0b' : 'var(--primary)';
+const statusColor = { Flagged: '239, 68, 68', Review: '245, 158, 11', Resolved: '16, 185, 129' };
 
 export default function GLDuplicate() {
   const [view, setView]             = useState('form');
@@ -87,17 +87,17 @@ export default function GLDuplicate() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h1 style={{ fontSize: '22px', fontWeight: 800, color: '#0f172a', marginBottom: '2px' }}>Duplicate Detection</h1>
-          <p style={{ fontSize: '13px', color: '#94a3b8' }}>AI-powered monitoring for journal entry redundancy</p>
+          <h1 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-main)', marginBottom: '2px' }}>Duplicate Detection</h1>
+          <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>AI-powered monitoring for journal entry redundancy</p>
         </div>
-        <div style={{ display: 'flex', gap: '8px', padding: '6px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px' }}>
+        <div style={{ display: 'flex', gap: '8px', padding: '6px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px' }}>
           {view === 'report' && (
-            <button onClick={handleExport} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '9px 18px', border: '1px solid #e2e8f0', background: '#fff', borderRadius: '8px', fontSize: '13px', fontWeight: 600, color: '#64748b', cursor: 'pointer' }}>
+            <button onClick={handleExport} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '9px 18px', border: '1px solid var(--border)', background: 'var(--bg-card)', borderRadius: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)', cursor: 'pointer' }}>
               <Download size={15} /> Export
             </button>
           )}
           {VIEWS.map(v => (
-            <button key={v.id} onClick={() => setView(v.id)} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '9px 18px', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s', background: view === v.id ? 'linear-gradient(to right,#1a56c4,#2563eb)' : 'transparent', color: view === v.id ? '#fff' : '#64748b' }}>
+            <button key={v.id} onClick={() => setView(v.id)} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '9px 18px', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s', background: view === v.id ? 'var(--primary)' : 'transparent', color: view === v.id ? '#fff' : 'var(--text-muted)' }}>
               <v.icon size={15} style={{ flexShrink: 0 }} />{v.label}
             </button>
           ))}
@@ -107,17 +107,17 @@ export default function GLDuplicate() {
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
         {[
-          { label: 'Total Flagged',       val: duplicates.filter(d => d.status === 'Flagged').length,   icon: FileWarning,   col: '#dc2626', bg: '#fef2f2' },
-          { label: 'Potential Savings',   val: '$14.2K',                                                 icon: CheckCircle2,  col: '#059669', bg: '#ecfdf5' },
-          { label: 'Avg Confidence',      val: Math.round(duplicates.reduce((s, d) => s + d.conf, 0) / duplicates.length) + '%', icon: Clock, col: '#2563eb', bg: '#eff6ff' },
+          { label: 'Total Flagged',       val: duplicates.filter(d => d.status === 'Flagged').length,   icon: FileWarning,   col: '#ef4444', bg: 'rgba(239, 68, 68, 0.1)' },
+          { label: 'Potential Savings',   val: '$14.2K',                                                 icon: CheckCircle2,  col: '#10b981', bg: 'rgba(16, 185, 129, 0.1)' },
+          { label: 'Avg Confidence',      val: Math.round(duplicates.reduce((s, d) => s + d.conf, 0) / duplicates.length) + '%', icon: Clock, col: 'var(--primary)', bg: 'rgba(37, 99, 235, 0.1)' },
         ].map(s => (
           <div key={s.label} style={{ ...S.card, padding: '20px', display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <s.icon size={22} color={s.col} style={{ flexShrink: 0 }} />
             </div>
             <div>
-              <p style={{ fontSize: '11px', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', marginBottom: '2px' }}>{s.label}</p>
-              <p style={{ fontSize: '22px', fontWeight: 800, color: '#0f172a' }}>{s.val}</p>
+              <p style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '2px' }}>{s.label}</p>
+              <p style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-main)' }}>{s.val}</p>
             </div>
           </div>
         ))}
@@ -130,12 +130,12 @@ export default function GLDuplicate() {
           {view === 'form' && (
             <div style={{ ...S.card, padding: '32px', maxWidth: '680px', margin: '0 auto' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '28px' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Plus size={20} color="#2563eb" style={{ flexShrink: 0 }} />
+                <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(37, 99, 235, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Plus size={20} color="var(--primary)" style={{ flexShrink: 0 }} />
                 </div>
                 <div>
-                  <h2 style={{ fontSize: '17px', fontWeight: 800, color: '#0f172a' }}>New Journal Entry</h2>
-                  <p style={{ fontSize: '12px', color: '#94a3b8' }}>AI will scan for duplicates before submission</p>
+                  <h2 style={{ fontSize: '17px', fontWeight: 800, color: 'var(--text-main)' }}>New Journal Entry</h2>
+                  <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>AI will scan for duplicates before submission</p>
                 </div>
               </div>
 
@@ -147,12 +147,12 @@ export default function GLDuplicate() {
                       <User size={11} style={{ display: 'inline', marginRight: '4px' }} />Vendor / Payee
                     </label>
                     <div style={{ position: 'relative' }}>
-                      <User size={15} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                      <User size={15} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
                       <input type="text" required placeholder="e.g. Amazon Web Services" value={form.vendor}
                         onChange={e => setForm({ ...form, vendor: e.target.value })}
                         style={{ ...S.input, paddingLeft: '38px' }}
-                        onFocus={e => e.target.style.borderColor = '#2563eb'}
-                        onBlur={e => e.target.style.borderColor = '#e2e8f0'} />
+                        onFocus={e => e.target.style.borderColor = 'var(--primary)'}
+                        onBlur={e => e.target.style.borderColor = 'var(--border)'} />
                     </div>
                   </div>
                   {/* Amount */}
@@ -161,12 +161,12 @@ export default function GLDuplicate() {
                       <DollarSign size={11} style={{ display: 'inline', marginRight: '4px' }} />Amount (USD)
                     </label>
                     <div style={{ position: 'relative' }}>
-                      <DollarSign size={15} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                      <DollarSign size={15} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
                       <input type="number" step="0.01" required placeholder="0.00" value={form.amt}
                         onChange={e => setForm({ ...form, amt: e.target.value })}
                         style={{ ...S.input, paddingLeft: '38px' }}
-                        onFocus={e => e.target.style.borderColor = '#2563eb'}
-                        onBlur={e => e.target.style.borderColor = '#e2e8f0'} />
+                        onFocus={e => e.target.style.borderColor = 'var(--primary)'}
+                        onBlur={e => e.target.style.borderColor = 'var(--border)'} />
                     </div>
                   </div>
                   {/* Reference */}
@@ -175,12 +175,12 @@ export default function GLDuplicate() {
                       <Hash size={11} style={{ display: 'inline', marginRight: '4px' }} />Reference Number
                     </label>
                     <div style={{ position: 'relative' }}>
-                      <Hash size={15} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                      <Hash size={15} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
                       <input type="text" required placeholder="INV-0000" value={form.ref}
                         onChange={e => setForm({ ...form, ref: e.target.value })}
                         style={{ ...S.input, paddingLeft: '38px' }}
-                        onFocus={e => e.target.style.borderColor = '#2563eb'}
-                        onBlur={e => e.target.style.borderColor = '#e2e8f0'} />
+                        onFocus={e => e.target.style.borderColor = 'var(--primary)'}
+                        onBlur={e => e.target.style.borderColor = 'var(--border)'} />
                     </div>
                   </div>
                   {/* Date */}
@@ -189,31 +189,31 @@ export default function GLDuplicate() {
                       <Calendar size={11} style={{ display: 'inline', marginRight: '4px' }} />Entry Date
                     </label>
                     <div style={{ position: 'relative' }}>
-                      <Calendar size={15} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                      <Calendar size={15} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
                       <input type="date" required value={form.date}
                         onChange={e => setForm({ ...form, date: e.target.value })}
                         style={{ ...S.input, paddingLeft: '38px' }}
-                        onFocus={e => e.target.style.borderColor = '#2563eb'}
-                        onBlur={e => e.target.style.borderColor = '#e2e8f0'} />
+                        onFocus={e => e.target.style.borderColor = 'var(--primary)'}
+                        onBlur={e => e.target.style.borderColor = 'var(--border)'} />
                     </div>
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
                   <button type="button" onClick={() => setForm({ vendor: '', amt: '', ref: '', date: '' })}
-                    style={{ flex: 1, padding: '13px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '14px', fontWeight: 600, color: '#64748b', cursor: 'pointer' }}>
+                    style={{ flex: 1, padding: '13px', background: 'var(--bg-dark)', border: '1px solid var(--border)', borderRadius: '10px', fontSize: '14px', fontWeight: 600, color: 'var(--text-muted)', cursor: 'pointer' }}>
                     Clear
                   </button>
                   <button type="submit"
-                    style={{ flex: 2, padding: '13px', background: 'linear-gradient(to right,#1a56c4,#2563eb)', border: 'none', borderRadius: '10px', fontSize: '14px', fontWeight: 700, color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(37,99,235,0.25)' }}>
+                    style={{ flex: 2, padding: '13px', background: 'var(--primary)', border: 'none', borderRadius: '10px', fontSize: '14px', fontWeight: 700, color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(37,99,235,0.25)' }}>
                     <Check size={18} style={{ flexShrink: 0 }} /> Verify & Submit Entry
                   </button>
                 </div>
               </form>
 
-              <div style={{ marginTop: '20px', padding: '14px 16px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+              <div style={{ marginTop: '20px', padding: '14px 16px', background: 'var(--bg-dark)', borderRadius: '10px', border: '1px solid var(--border)', display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
                 <AlertTriangle size={16} color="#f59e0b" style={{ flexShrink: 0, marginTop: '1px' }} />
-                <p style={{ fontSize: '12px', color: '#64748b', lineHeight: '1.5' }}>
+                <p style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: '1.5' }}>
                   <strong>AI Tip:</strong> Try entering "Amazon" as the vendor or "INV-2024-001" as the reference to trigger the duplicate detection demo.
                 </p>
               </div>
@@ -226,29 +226,29 @@ export default function GLDuplicate() {
               {/* Filters */}
               <div style={{ ...S.card, padding: '16px 20px', display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
                 <div style={{ position: 'relative', flex: 1, minWidth: '200px' }}>
-                  <Search size={15} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                  <Search size={15} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
                   <input type="text" placeholder="Search vendor, reference or amount…" value={search} onChange={e => setSearch(e.target.value)}
                     style={{ ...S.input, paddingLeft: '38px', fontSize: '13px', padding: '9px 14px 9px 38px' }} />
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Filter size={15} color="#64748b" style={{ flexShrink: 0 }} />
+                  <Filter size={15} color="var(--text-muted)" style={{ flexShrink: 0 }} />
                   <input type="text" placeholder="Vendor filter" value={vendorFilter} onChange={e => setVendorFilter(e.target.value)}
                     style={{ ...S.input, width: '160px', fontSize: '13px', padding: '9px 12px' }} />
                   <input type="date" value={dateFilter} onChange={e => setDateFilter(e.target.value)}
                     style={{ ...S.input, width: '160px', fontSize: '13px', padding: '9px 12px' }} />
                   <button onClick={() => { setSearch(''); setVendorFilter(''); setDateFilter(''); }}
-                    style={{ padding: '9px 12px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '12px', fontWeight: 600, color: '#64748b', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    style={{ padding: '9px 12px', background: 'var(--bg-dark)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <X size={13} style={{ flexShrink: 0 }} /> Clear
                   </button>
                 </div>
               </div>
 
               <div style={{ ...S.card, overflow: 'hidden' }}>
-                <div style={{ padding: '16px 20px', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <p style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a' }}>Flagged Duplicates ({filtered.length})</p>
+                <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <p style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-main)' }}>Flagged Duplicates ({filtered.length})</p>
                   <div style={{ display: 'flex', gap: '8px' }}>
                     {['All', 'Flagged', 'Review', 'Resolved'].map(s => (
-                      <button key={s} style={{ padding: '6px 14px', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '12px', fontWeight: 600, color: '#64748b', background: '#fff', cursor: 'pointer' }}>{s}</button>
+                      <button key={s} style={{ padding: '6px 14px', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', background: 'var(--bg-card)', cursor: 'pointer' }}>{s}</button>
                     ))}
                   </div>
                 </div>
@@ -259,15 +259,15 @@ export default function GLDuplicate() {
                   <tbody>
                     {filtered.map((d, i) => (
                       <motion.tr key={d.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.04 }}
-                        style={{ background: i % 2 === 0 ? '#fff' : '#fafbff' }}>
-                        <td style={{ ...S.td, fontWeight: 600, color: '#0f172a' }}>{d.vendor}</td>
-                        <td style={S.td}><code style={{ background: '#f1f5f9', padding: '2px 7px', borderRadius: '4px', fontSize: '11.5px', fontWeight: 600 }}>{d.ref}</code></td>
+                        style={{ background: i % 2 === 0 ? 'var(--bg-card)' : 'var(--bg-dark)' }}>
+                        <td style={{ ...S.td, fontWeight: 600, color: 'var(--text-main)' }}>{d.vendor}</td>
+                        <td style={S.td}><code style={{ background: 'var(--bg-dark)', border: '1px solid var(--border)', padding: '2px 7px', borderRadius: '4px', fontSize: '11.5px', fontWeight: 600, color: 'var(--text-main)' }}>{d.ref}</code></td>
                         <td style={{ ...S.td, fontWeight: 700 }}>{d.amt}</td>
-                        <td style={{ ...S.td, color: '#64748b' }}>{d.date}</td>
-                        <td style={{ ...S.td, fontSize: '12px', color: '#64748b' }}>{d.match}</td>
+                        <td style={{ ...S.td, color: 'var(--text-muted)' }}>{d.date}</td>
+                        <td style={{ ...S.td, fontSize: '12px', color: 'var(--text-muted)' }}>{d.match}</td>
                         <td style={S.td}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <div style={{ width: '50px', height: '5px', background: '#f1f5f9', borderRadius: '4px', overflow: 'hidden' }}>
+                            <div style={{ width: '50px', height: '5px', background: 'var(--bg-dark)', borderRadius: '4px', overflow: 'hidden' }}>
                               <div style={{ height: '100%', width: `${d.conf}%`, background: confColor(d.conf), borderRadius: '4px' }} />
                             </div>
                             <span style={{ fontSize: '11.5px', fontWeight: 700, color: confColor(d.conf) }}>{d.conf}%</span>
@@ -276,12 +276,12 @@ export default function GLDuplicate() {
                         <td style={S.td}><span style={S.badge(statusColor[d.status])}>{d.status}</span></td>
                         <td style={S.td}>
                           <div style={{ display: 'flex', gap: '6px' }}>
-                            <button onClick={() => startEdit(d)} style={{ width: '28px', height: '28px', borderRadius: '7px', border: '1px solid #e2e8f0', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 }}>
-                              <Edit2 size={14} color="#64748b" style={{ flexShrink: 0 }} />
+                            <button onClick={() => startEdit(d)} style={{ width: '28px', height: '28px', borderRadius: '7px', border: '1px solid var(--border)', background: 'var(--bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 }}>
+                              <Edit2 size={14} color="var(--text-muted)" style={{ flexShrink: 0 }} />
                             </button>
                             <button onClick={() => setDuplicates(p => p.map(x => x.id === d.id ? { ...x, status: 'Resolved' } : x))}
-                              style={{ width: '28px', height: '28px', borderRadius: '7px', border: 'none', background: '#ecfdf5', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 }}>
-                              <Check size={14} color="#059669" style={{ flexShrink: 0 }} />
+                              style={{ width: '28px', height: '28px', borderRadius: '7px', border: 'none', background: 'rgba(16, 185, 129, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 }}>
+                              <Check size={14} color="#10b981" style={{ flexShrink: 0 }} />
                             </button>
                           </div>
                         </td>
@@ -301,10 +301,10 @@ export default function GLDuplicate() {
         {editData && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.6)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-              style={{ background: '#fff', borderRadius: '20px', padding: '32px', width: '100%', maxWidth: '480px', boxShadow: '0 25px 50px rgba(0,0,0,0.2)' }}>
+              style={{ background: 'var(--bg-card)', borderRadius: '20px', padding: '32px', width: '100%', maxWidth: '480px', boxShadow: '0 25px 50px rgba(0,0,0,0.2)', border: '1px solid var(--border)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                <h3 style={{ fontSize: '18px', fontWeight: 800 }}>Edit Flagged Entry</h3>
-                <button onClick={() => setEditData(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}><X size={20} /></button>
+                <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-main)' }}>Edit Flagged Entry</h3>
+                <button onClick={() => setEditData(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><X size={20} /></button>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -314,8 +314,8 @@ export default function GLDuplicate() {
               </div>
 
               <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
-                <button onClick={() => setEditData(null)} style={{ flex: 1, padding: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', fontWeight: 600 }}>Cancel</button>
-                <button onClick={handleSaveEdit} style={{ flex: 1, padding: '12px', background: '#2563eb', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 700 }}>Save Changes</button>
+                <button onClick={() => setEditData(null)} style={{ flex: 1, padding: '12px', background: 'var(--bg-dark)', border: '1px solid var(--border)', borderRadius: '10px', fontWeight: 600, color: 'var(--text-muted)' }}>Cancel</button>
+                <button onClick={handleSaveEdit} style={{ flex: 1, padding: '12px', background: 'var(--primary)', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 700 }}>Save Changes</button>
               </div>
             </motion.div>
           </div>

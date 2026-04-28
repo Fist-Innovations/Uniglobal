@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { UploadCloud, FileText, BarChart3, Calculator, CheckCircle2, ArrowRight, TrendingUp, Download, Edit2, Check, X } from 'lucide-react';
+import { UploadCloud, FileText, BarChart3, Calculator, CheckCircle2, ArrowRight, TrendingUp, Download, Edit2, Check, X, Building2, Coins, TrendingDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import * as XLSX from 'xlsx';
@@ -7,10 +7,10 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
 const S = {
-  card: { background: '#fff', borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' },
-  th: { padding: '13px 18px', fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.8px', background: '#f8fafc', textAlign: 'left' },
-  td: { padding: '15px 18px', fontSize: '13px', color: '#374151', borderBottom: '1px solid #f8fafc' },
-  badge: (col) => ({ padding: '3px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: 700, background: col + '15', color: col }),
+  card: { background: 'var(--bg-card)', borderRadius: '16px', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)', transition: 'background 0.3s, border-color 0.3s' },
+  th: { padding: '13px 18px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.8px', background: 'var(--bg-dark)', textAlign: 'left' },
+  td: { padding: '15px 18px', fontSize: '13px', color: 'var(--text-main)', borderBottom: '1px solid var(--border)' },
+  badge: (col) => ({ padding: '3px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: 700, background: 'rgba(' + col + ', 0.1)', color: 'rgb(' + col + ')' }),
 };
 
 const COMPANIES = [
@@ -40,9 +40,10 @@ const STEPS = [
 const btn = (primary) => ({
   padding: '10px 20px', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 600,
   cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px',
-  background: primary ? 'linear-gradient(to right,#1a56c4,#2563eb)' : '#f1f5f9',
-  color: primary ? '#fff' : '#0f172a',
-  boxShadow: primary ? '0 4px 12px rgba(37,99,235,0.25)' : 'none',
+  background: primary ? 'var(--primary)' : 'var(--bg-dark)',
+  color: primary ? '#fff' : 'var(--text-main)',
+  boxShadow: primary ? '0 4px 12px rgba(0,0,0,0.2)' : 'none',
+  border: primary ? 'none' : '1px solid var(--border)'
 });
 
 export default function ShippingKuwait() {
@@ -133,7 +134,7 @@ export default function ShippingKuwait() {
       head: [['Company', 'Rev 2025', 'Rev 2026', 'Assets 2026', 'Profit 2026', 'Expenses 2026']],
       body: tableData,
       theme: 'grid',
-      headStyles: { fillColor: [26, 86, 196] }
+      headStyles: { fillColor: [37, 99, 235] }
     });
 
     doc.save("Shipping_Budget_Kuwait_2026.pdf");
@@ -157,8 +158,8 @@ export default function ShippingKuwait() {
             <button key={s.id} onClick={() => setStep(s.id)} style={{
               flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
               padding: '10px', borderRadius: '10px', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: 600,
-              background: active ? 'linear-gradient(to right,#1a56c4,#2563eb)' : done ? '#ecfdf5' : '#f8fafc',
-              color: active ? '#fff' : done ? '#059669' : '#94a3b8', transition: 'all 0.2s',
+              background: active ? 'var(--primary)' : done ? 'rgba(16, 185, 129, 0.1)' : 'var(--bg-dark)',
+              color: active ? '#fff' : done ? '#10b981' : 'var(--text-muted)', transition: 'all 0.2s',
             }}>
               {done ? <Check size={15} /> : <s.icon size={15} />} <span style={{ whiteSpace: 'nowrap' }}>{s.label}</span>
             </button>
@@ -173,11 +174,11 @@ export default function ShippingKuwait() {
           {step === 'upload' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               <input type="file" id="shipping-upload" multiple style={{ display: 'none' }} onChange={handleFileSelect} />
-              <div style={{ ...S.card, padding: '48px', textAlign: 'center', border: '2px dashed #bfdbfe', background: '#fafbff', cursor: 'pointer' }}
+              <div style={{ ...S.card, padding: '48px', textAlign: 'center', border: '2px dashed var(--border)', background: 'var(--bg-dark)', cursor: 'pointer' }}
                 onClick={() => document.getElementById('shipping-upload').click()}>
-                <UploadCloud size={48} style={{ color: '#2563eb', margin: '0 auto 16px' }} />
-                <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', marginBottom: '8px' }}>Drop Financial Reports Here</h3>
-                <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '20px' }}>Supports PDF, Excel (.xlsx), CSV. Upload multiple company reports at once.</p>
+                <UploadCloud size={48} style={{ color: 'var(--primary)', margin: '0 auto 16px' }} />
+                <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-main)', marginBottom: '8px' }}>Drop Financial Reports Here</h3>
+                <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '20px' }}>Supports PDF, Excel (.xlsx), CSV. Upload multiple company reports at once.</p>
                 <button style={btn(true)}><UploadCloud size={16} /> Select Files</button>
               </div>
 
@@ -185,19 +186,19 @@ export default function ShippingKuwait() {
                 {showConfirm && (
                   <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
                     <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
-                      style={{ ...S.card, width: '100%', maxWidth: '440px', padding: '32px', textAlign: 'center' }}>
-                      <div style={{ width: '64px', height: '64px', background: '#eff6ff', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
-                        <UploadCloud size={32} color="#2563eb" />
+                      style={{ ...S.card, width: '100%', maxWidth: '440px', padding: '32px', textAlign: 'center', boxShadow: '0 25px 50px rgba(0,0,0,0.3)' }}>
+                      <div style={{ width: '64px', height: '64px', background: 'rgba(37, 99, 235, 0.1)', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+                        <UploadCloud size={32} color="var(--primary)" />
                       </div>
-                      <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#0f172a', marginBottom: '10px' }}>Confirm File Upload</h2>
-                      <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '24px', lineHeight: 1.5 }}>
+                      <h2 style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-main)', marginBottom: '10px' }}>Confirm File Upload</h2>
+                      <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '24px', lineHeight: 1.5 }}>
                         You are about to upload <strong>{tempFiles.length}</strong> financial report{tempFiles.length > 1 ? 's' : ''} for analysis. Do you wish to continue?
                       </p>
                       
-                      <div style={{ background: '#f8fafc', borderRadius: '12px', padding: '12px', marginBottom: '24px', textAlign: 'left', maxHeight: '120px', overflowY: 'auto' }}>
+                      <div style={{ background: 'var(--bg-dark)', borderRadius: '12px', padding: '12px', marginBottom: '24px', textAlign: 'left', maxHeight: '120px', overflowY: 'auto', border: '1px solid var(--border)' }}>
                         {tempFiles.map((f, i) => (
-                          <div key={i} style={{ fontSize: '12px', color: '#475569', display: 'flex', alignItems: 'center', gap: '8px', padding: '4px 0' }}>
-                            <FileText size={14} /> {f.name} ({(f.size / 1024).toFixed(1)} KB)
+                          <div key={i} style={{ fontSize: '12px', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px', padding: '4px 0' }}>
+                            <FileText size={14} color="var(--text-muted)" /> {f.name} ({(f.size / 1024).toFixed(1)} KB)
                           </div>
                         ))}
                       </div>
@@ -213,17 +214,17 @@ export default function ShippingKuwait() {
 
               {uploaded.length > 0 && (
                 <div style={S.card}>
-                  <div style={{ padding: '16px 20px', borderBottom: '1px solid #f1f5f9', fontWeight: 700, color: '#0f172a' }}>Uploaded Files ({uploaded.length})</div>
+                  <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', fontWeight: 700, color: 'var(--text-main)' }}>Uploaded Files ({uploaded.length})</div>
                   {uploaded.map((f, i) => (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', borderBottom: i < uploaded.length - 1 ? '1px solid #f8fafc' : 'none' }}>
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', borderBottom: i < uploaded.length - 1 ? '1px solid var(--border)' : 'none' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <div style={{ width: '36px', height: '36px', background: '#eff6ff', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><FileText size={18} color="#2563eb" /></div>
+                        <div style={{ width: '36px', height: '36px', background: 'rgba(37, 99, 235, 0.1)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><FileText size={18} color="var(--primary)" /></div>
                         <div>
-                          <div style={{ fontWeight: 600, fontSize: '14px', color: '#0f172a' }}>{f}</div>
-                          <div style={{ fontSize: '12px', color: '#94a3b8' }}>{COMPANIES[i].name}</div>
+                          <div style={{ fontWeight: 600, fontSize: '14px', color: 'var(--text-main)' }}>{f}</div>
+                          <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{COMPANIES[i].name}</div>
                         </div>
                       </div>
-                      <span style={S.badge('#059669')}>Uploaded</span>
+                      <span style={S.badge('16, 185, 129')}>Uploaded</span>
                     </div>
                   ))}
                 </div>
@@ -240,14 +241,14 @@ export default function ShippingKuwait() {
           {step === 'normalize' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               <div style={{ ...S.card, padding: '24px' }}>
-                <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', marginBottom: '4px' }}>Field Mapping</h3>
-                <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '24px' }}>Map extracted columns to standard financial fields.</p>
+                <h3 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-main)', marginBottom: '4px' }}>Field Mapping</h3>
+                <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '24px' }}>Map extracted columns to standard financial fields.</p>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: '16px' }}>
                   {Object.entries(fieldMap).map(([k, v]) => (
                     <div key={k}>
-                      <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#64748b', marginBottom: '6px', textTransform: 'uppercase' }}>{k}</label>
+                      <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '6px', textTransform: 'uppercase' }}>{k}</label>
                       <select value={v} onChange={e => setFieldMap(p => ({ ...p, [k]: e.target.value }))}
-                        style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '14px', outline: 'none', background: '#fff' }}>
+                        style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)', fontSize: '14px', outline: 'none', background: 'var(--bg-dark)', color: 'var(--text-main)' }}>
                         <option>Revenue</option><option>Total Assets</option><option>Net Income</option><option>Operating Expenses</option><option>Gross Profit</option>
                       </select>
                     </div>
@@ -255,12 +256,12 @@ export default function ShippingKuwait() {
                 </div>
               </div>
               <div style={{ ...S.card, overflow: 'hidden' }}>
-                <div style={{ padding: '16px 20px', borderBottom: '1px solid #f1f5f9', fontWeight: 700, color: '#0f172a', fontSize: '15px' }}>Extracted Data Preview</div>
+                <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', fontWeight: 700, color: 'var(--text-main)', fontSize: '15px' }}>Extracted Data Preview</div>
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead><tr>{['Company', 'Revenue (KWD)', 'Assets (KWD)', 'Profit (KWD)', 'Expenses (KWD)'].map(h => <th key={h} style={S.th}>{h}</th>)}</tr></thead>
                   <tbody>
                     {COMPANIES.map((c, i) => (
-                      <tr key={i} style={{ background: i % 2 === 0 ? '#fff' : '#fafbff' }}>
+                      <tr key={i} style={{ background: i % 2 === 0 ? 'var(--bg-card)' : 'var(--bg-dark)' }}>
                         <td style={{ ...S.td, fontWeight: 600 }}>{c.name}</td>
                         <td style={S.td}>{c.revenue.toLocaleString()}</td>
                         <td style={S.td}>{c.assets.toLocaleString()}</td>
@@ -283,36 +284,36 @@ export default function ShippingKuwait() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '20px' }}>
                 <div style={{ ...S.card, padding: '24px' }}>
-                  <p style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', marginBottom: '4px' }}>Revenue Comparison (KWD '000s)</p>
-                  <p style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '20px' }}>Side-by-side metric comparison · FY 2025</p>
+                  <p style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-main)', marginBottom: '4px' }}>Revenue Comparison (KWD '000s)</p>
+                  <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '20px' }}>Side-by-side metric comparison · FY 2025</p>
                   <div style={{ height: '280px' }}>
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={compChart} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-                        <XAxis dataKey="name" stroke="#cbd5e1" fontSize={11} tickLine={false} axisLine={false} />
-                        <YAxis stroke="#cbd5e1" fontSize={11} tickLine={false} axisLine={false} />
-                        <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '12px' }} />
-                        <Bar dataKey="Kuwait" fill="#2563eb" radius={[4,4,0,0]} barSize={14} />
-                        <Bar dataKey="Gulf"   fill="#7c3aed" radius={[4,4,0,0]} barSize={14} />
-                        <Bar dataKey="Pearl"  fill="#059669" radius={[4,4,0,0]} barSize={14} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                        <XAxis dataKey="name" stroke="var(--text-muted)" fontSize={11} tickLine={false} axisLine={false} />
+                        <YAxis stroke="var(--text-muted)" fontSize={11} tickLine={false} axisLine={false} />
+                        <Tooltip contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '10px', fontSize: '12px', color: 'var(--text-main)' }} />
+                        <Bar dataKey="Kuwait" fill="var(--primary)" radius={[4,4,0,0]} barSize={14} />
+                        <Bar dataKey="Gulf"   fill="#a855f7" radius={[4,4,0,0]} barSize={14} />
+                        <Bar dataKey="Pearl"  fill="#10b981" radius={[4,4,0,0]} barSize={14} />
                         <Bar dataKey="Coastal" fill="#f59e0b" radius={[4,4,0,0]} barSize={14} />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
                 </div>
                 <div style={{ ...S.card, padding: '24px' }}>
-                  <p style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', marginBottom: '4px' }}>Profit Trends</p>
-                  <p style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '20px' }}>Monthly profit trajectory · H1 2025</p>
+                  <p style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-main)', marginBottom: '4px' }}>Profit Trends</p>
+                  <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '20px' }}>Monthly profit trajectory · H1 2025</p>
                   <div style={{ height: '280px' }}>
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart data={PROFIT_TREND} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-                        <XAxis dataKey="month" stroke="#cbd5e1" fontSize={11} tickLine={false} axisLine={false} />
-                        <YAxis stroke="#cbd5e1" fontSize={11} tickLine={false} axisLine={false} />
-                        <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '12px' }} />
-                        <Line type="monotone" dataKey="KSC" stroke="#2563eb" strokeWidth={2} dot={false} />
-                        <Line type="monotone" dataKey="GCL" stroke="#7c3aed" strokeWidth={2} dot={false} />
-                        <Line type="monotone" dataKey="PM"  stroke="#059669" strokeWidth={2} dot={false} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                        <XAxis dataKey="month" stroke="var(--text-muted)" fontSize={11} tickLine={false} axisLine={false} />
+                        <YAxis stroke="var(--text-muted)" fontSize={11} tickLine={false} axisLine={false} />
+                        <Tooltip contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '10px', fontSize: '12px', color: 'var(--text-main)' }} />
+                        <Line type="monotone" dataKey="KSC" stroke="var(--primary)" strokeWidth={2} dot={false} />
+                        <Line type="monotone" dataKey="GCL" stroke="#a855f7" strokeWidth={2} dot={false} />
+                        <Line type="monotone" dataKey="PM"  stroke="#10b981" strokeWidth={2} dot={false} />
                         <Line type="monotone" dataKey="CL"  stroke="#f59e0b" strokeWidth={2} dot={false} />
                       </LineChart>
                     </ResponsiveContainer>
@@ -320,20 +321,20 @@ export default function ShippingKuwait() {
                 </div>
               </div>
               <div style={{ ...S.card, overflow: 'hidden' }}>
-                <div style={{ padding: '16px 20px', borderBottom: '1px solid #f1f5f9', fontWeight: 700, color: '#0f172a' }}>Side-by-Side Comparison Table</div>
+                <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', fontWeight: 700, color: 'var(--text-main)' }}>Side-by-Side Comparison Table</div>
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead><tr>{['Company','Revenue','Assets','Profit','Expenses','Margin'].map(h=><th key={h} style={S.th}>{h}</th>)}</tr></thead>
                   <tbody>
                     {COMPANIES.map((c, i) => {
                       const margin = ((c.profit / c.revenue) * 100).toFixed(1);
                       return (
-                        <tr key={i} style={{ background: i % 2 === 0 ? '#fff' : '#fafbff' }}>
-                          <td style={{ ...S.td, fontWeight: 600, color: '#0f172a' }}>{c.name}</td>
+                        <tr key={i} style={{ background: i % 2 === 0 ? 'var(--bg-card)' : 'var(--bg-dark)' }}>
+                          <td style={{ ...S.td, fontWeight: 600, color: 'var(--text-main)' }}>{c.name}</td>
                           <td style={S.td}>KWD {c.revenue.toLocaleString()}</td>
                           <td style={S.td}>KWD {c.assets.toLocaleString()}</td>
-                          <td style={{ ...S.td, fontWeight: 700, color: '#059669' }}>KWD {c.profit.toLocaleString()}</td>
+                          <td style={{ ...S.td, fontWeight: 700, color: '#10b981' }}>KWD {c.profit.toLocaleString()}</td>
                           <td style={S.td}>KWD {c.expenses.toLocaleString()}</td>
-                          <td style={S.td}><span style={S.badge(parseFloat(margin) > 20 ? '#059669' : '#f59e0b')}>{margin}%</span></td>
+                          <td style={S.td}><span style={S.badge(parseFloat(margin) > 20 ? '16, 185, 129' : '245, 158, 11')}>{margin}%</span></td>
                         </tr>
                       );
                     })}
@@ -352,32 +353,34 @@ export default function ShippingKuwait() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '16px' }}>
                 {[
-                  { label: 'Revenue', rule: '+10%', col: '#059669', icon: '📈' },
-                  { label: 'Assets',  rule: '+10%', col: '#2563eb', icon: '🏦' },
-                  { label: 'Profit',  rule: '+10%', col: '#7c3aed', icon: '💰' },
-                  { label: 'Expenses',rule: '-5%',  col: '#f59e0b', icon: '📉' },
+                  { label: 'Revenue', rule: '+10%', col: '#10b981', Icon: TrendingUp },
+                  { label: 'Assets',  rule: '+10%', col: 'var(--primary)', Icon: Building2 },
+                  { label: 'Profit',  rule: '+10%', col: '#a855f7', Icon: Coins },
+                  { label: 'Expenses',rule: '-5%',  col: '#f59e0b', Icon: TrendingDown },
                 ].map(item => (
                   <div key={item.label} style={{ ...S.card, padding: '20px', textAlign: 'center' }}>
-                    <div style={{ fontSize: '28px', marginBottom: '8px' }}>{item.icon}</div>
-                    <div style={{ fontSize: '13px', fontWeight: 700, color: '#64748b', marginBottom: '4px' }}>{item.label}</div>
+                    <div style={{ fontSize: '28px', marginBottom: '8px', display: 'flex', justifyContent: 'center' }}>
+                      <item.Icon size={32} color={item.col} />
+                    </div>
+                    <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px' }}>{item.label}</div>
                     <div style={{ fontSize: '22px', fontWeight: 800, color: item.col }}>{item.rule}</div>
-                    <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '4px' }}>Auto-applied for 2026</div>
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>Auto-applied for 2026</div>
                   </div>
                 ))}
               </div>
               <div style={{ ...S.card, overflow: 'hidden' }}>
-                <div style={{ padding: '16px 24px', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ padding: '16px 24px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
-                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '15px' }}>2026 Budget — Editable Fields</div>
-                    <div style={{ fontSize: '12px', color: '#94a3b8' }}>Auto-calculated · click any field to edit</div>
+                    <div style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: '15px' }}>2026 Budget — Editable Fields</div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Auto-calculated · click any field to edit</div>
                   </div>
-                  <span style={S.badge('#059669')}>Auto Logic Applied</span>
+                  <span style={S.badge('16, 185, 129')}>Auto Logic Applied</span>
                 </div>
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead><tr>{['Company','Revenue 2026','Assets 2026','Profit 2026','Expenses 2026'].map(h=><th key={h} style={S.th}>{h}</th>)}</tr></thead>
                   <tbody>
                     {budget.map((b, i) => (
-                      <tr key={i} style={{ background: i % 2 === 0 ? '#fff' : '#fafbff' }}>
+                      <tr key={i} style={{ background: i % 2 === 0 ? 'var(--bg-card)' : 'var(--bg-dark)' }}>
                         <td style={{ ...S.td, fontWeight: 600 }}>{b.name}</td>
                         {['revenue','assets','profit','expenses'].map(field => (
                           <td key={field} style={S.td}>
@@ -385,7 +388,7 @@ export default function ShippingKuwait() {
                               type="number"
                               value={b[field]}
                               onChange={e => setBudget(p => p.map((row, ri) => ri === i ? { ...row, [field]: +e.target.value } : row))}
-                              style={{ width: '110px', padding: '6px 10px', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '13px', fontWeight: 600, color: field === 'expenses' ? '#f59e0b' : '#059669', outline: 'none', background: '#f8fafc' }}
+                              style={{ width: '110px', padding: '6px 10px', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '13px', fontWeight: 600, color: field === 'expenses' ? '#f59e0b' : '#10b981', outline: 'none', background: 'var(--bg-card)' }}
                             />
                           </td>
                         ))}
@@ -405,45 +408,45 @@ export default function ShippingKuwait() {
           {step === 'review' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               {approved && (
-                <div style={{ ...S.card, padding: '20px 24px', background: 'linear-gradient(to right, #ecfdf5, #f0fdf4)', border: '1px solid #a7f3d0', display: 'flex', alignItems: 'center', gap: '16px' }}>
-                  <CheckCircle2 size={28} color="#059669" />
+                <div style={{ ...S.card, padding: '20px 24px', background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.2)', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  <CheckCircle2 size={28} color="#10b981" />
                   <div>
-                    <div style={{ fontWeight: 700, color: '#059669', fontSize: '15px' }}>Budget Approved!</div>
-                    <div style={{ fontSize: '13px', color: '#064e3b' }}>The 2026 budget has been locked and is ready for export.</div>
+                    <div style={{ fontWeight: 700, color: '#10b981', fontSize: '15px' }}>Budget Approved!</div>
+                    <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>The 2026 budget has been locked and is ready for export.</div>
                   </div>
                 </div>
               )}
               <div style={{ ...S.card, overflow: 'hidden' }}>
-                <div style={{ padding: '20px 24px', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc' }}>
+                <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-dark)' }}>
                   <div>
-                    <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '16px' }}>Final Budget Draft — FY 2026</div>
-                    <div style={{ fontSize: '12px', color: '#94a3b8' }}>Kuwait Financial Comparison · {selectedIds.size} of {COMPANIES.length} selected</div>
+                    <div style={{ fontWeight: 800, color: 'var(--text-main)', fontSize: '16px' }}>Final Budget Draft — FY 2026</div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Kuwait Financial Comparison · {selectedIds.size} of {COMPANIES.length} selected</div>
                   </div>
                   <div style={{ display: 'flex', gap: '10px' }}>
-                    <button onClick={exportToPDF} style={{ ...btn(false), background: '#fff', border: '1px solid #e2e8f0' }}><Download size={16} /> Export PDF</button>
-                    <button onClick={exportToExcel} style={{ ...btn(false), background: '#fff', border: '1px solid #e2e8f0' }}><Download size={16} /> Export Excel</button>
+                    <button onClick={exportToPDF} style={{ ...btn(false), background: 'var(--bg-card)' }}><Download size={16} /> Export PDF</button>
+                    <button onClick={exportToExcel} style={{ ...btn(false), background: 'var(--bg-card)' }}><Download size={16} /> Export Excel</button>
                   </div>
                 </div>
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
                     <tr>
                       <th style={{ ...S.th, width: '40px', paddingRight: 0 }}>
-                        <input type="checkbox" checked={COMPANIES.length > 0 && selectedIds.size === COMPANIES.length} onChange={toggleSelectAll} style={{ cursor: 'pointer', width: '15px', height: '15px', accentColor: '#2563eb' }} />
+                        <input type="checkbox" checked={COMPANIES.length > 0 && selectedIds.size === COMPANIES.length} onChange={toggleSelectAll} style={{ cursor: 'pointer', width: '15px', height: '15px', accentColor: 'var(--primary)' }} />
                       </th>
                       {['Company','Rev 2025','Rev 2026 (+10%)','Assets 2026 (+10%)','Profit 2026 (+10%)','Expenses 2026 (-5%)'].map(h=><th key={h} style={S.th}>{h}</th>)}
                     </tr>
                   </thead>
                   <tbody>
                     {budget.map((b, i) => (
-                      <tr key={i} style={{ background: selectedIds.has(b.name) ? '#eff6ff' : i % 2 === 0 ? '#fff' : '#fafbff' }}>
+                      <tr key={i} style={{ background: selectedIds.has(b.name) ? 'rgba(37, 99, 235, 0.05)' : i % 2 === 0 ? 'var(--bg-card)' : 'var(--bg-dark)' }}>
                         <td style={{ ...S.td, paddingRight: 0 }}>
-                          <input type="checkbox" checked={selectedIds.has(b.name)} onChange={() => toggleSelect(b.name)} style={{ cursor: 'pointer', width: '15px', height: '15px', accentColor: '#2563eb' }} />
+                          <input type="checkbox" checked={selectedIds.has(b.name)} onChange={() => toggleSelect(b.name)} style={{ cursor: 'pointer', width: '15px', height: '15px', accentColor: 'var(--primary)' }} />
                         </td>
-                        <td style={{ ...S.td, fontWeight: 700, color: '#0f172a' }}>{b.name}</td>
+                        <td style={{ ...S.td, fontWeight: 700, color: 'var(--text-main)' }}>{b.name}</td>
                         <td style={S.td}>KWD {COMPANIES[i].revenue.toLocaleString()}</td>
-                        <td style={{ ...S.td, color: '#059669', fontWeight: 700 }}>KWD {b.revenue.toLocaleString()}</td>
-                        <td style={{ ...S.td, color: '#2563eb', fontWeight: 700 }}>KWD {b.assets.toLocaleString()}</td>
-                        <td style={{ ...S.td, color: '#7c3aed', fontWeight: 700 }}>KWD {b.profit.toLocaleString()}</td>
+                        <td style={{ ...S.td, color: '#10b981', fontWeight: 700 }}>KWD {b.revenue.toLocaleString()}</td>
+                        <td style={{ ...S.td, color: 'var(--primary)', fontWeight: 700 }}>KWD {b.assets.toLocaleString()}</td>
+                        <td style={{ ...S.td, color: '#a855f7', fontWeight: 700 }}>KWD {b.profit.toLocaleString()}</td>
                         <td style={{ ...S.td, color: '#f59e0b', fontWeight: 700 }}>KWD {b.expenses.toLocaleString()}</td>
                       </tr>
                     ))}
@@ -453,10 +456,10 @@ export default function ShippingKuwait() {
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <button style={btn(false)} onClick={() => setStep('budget')}>Back</button>
                 <div style={{ display: 'flex', gap: '12px' }}>
-                  <button disabled={selectedIds.size === 0} style={{ ...btn(false), color: selectedIds.size === 0 ? '#94a3b8' : '#dc2626', background: selectedIds.size === 0 ? '#f8fafc' : '#fef2f2', border: selectedIds.size === 0 ? '1px solid #e2e8f0' : '1px solid #fecaca', cursor: selectedIds.size === 0 ? 'not-allowed' : 'pointer' }}>
+                  <button disabled={selectedIds.size === 0} style={{ ...btn(false), color: selectedIds.size === 0 ? 'var(--text-muted)' : '#ef4444', background: selectedIds.size === 0 ? 'var(--bg-dark)' : 'rgba(239, 68, 68, 0.1)', border: selectedIds.size === 0 ? '1px solid var(--border)' : '1px solid rgba(239, 68, 68, 0.2)', cursor: selectedIds.size === 0 ? 'not-allowed' : 'pointer' }}>
                     <X size={16} /> Reject Selected ({selectedIds.size})
                   </button>
-                  <button onClick={handleBulkApprove} disabled={selectedIds.size === 0} style={{ ...btn(true), background: approved ? '#059669' : selectedIds.size === 0 ? '#e2e8f0' : 'linear-gradient(to right,#1a56c4,#2563eb)', cursor: selectedIds.size === 0 ? 'not-allowed' : 'pointer' }}>
+                  <button onClick={handleBulkApprove} disabled={selectedIds.size === 0} style={{ ...btn(true), background: approved ? '#10b981' : selectedIds.size === 0 ? 'var(--border)' : 'var(--primary)', cursor: selectedIds.size === 0 ? 'not-allowed' : 'pointer' }}>
                     <Check size={16} /> {approved ? 'Approved ✓' : `Approve Selected (${selectedIds.size})`}
                   </button>
                 </div>

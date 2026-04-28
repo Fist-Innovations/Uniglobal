@@ -1,9 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --bg-dark: #f8fafc;
+  --bg-dark: #f1f5f9;
   --bg-card: #ffffff;
   --bg-sidebar: #ffffff;
+  --bg-header: #ffffff;
   --primary: #2563eb;
   --primary-glow: rgba(37, 99, 235, 0.1);
   --secondary: #7c3aed;
@@ -11,6 +12,8 @@
   --text-main: #0f172a;
   --text-muted: #64748b;
   --border: #e2e8f0;
+  --sidebar-border: #e2e8f0;
+  --input-bg: #ffffff;
   --glass: rgba(255, 255, 255, 0.8);
   --glass-border: rgba(226, 232, 240, 0.8);
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -18,6 +21,20 @@
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+.dark {
+  --bg-dark: #0f172a;
+  --bg-card: #1e293b;
+  --bg-sidebar: #1e293b;
+  --bg-header: #1e293b;
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --border: #334155;
+  --sidebar-border: #334155;
+  --input-bg: #0f172a;
+  --glass: rgba(30, 41, 59, 0.8);
+  --glass-border: rgba(51, 65, 85, 0.8);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -37,8 +54,8 @@ body {
 /* Scrollbar */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: var(--bg-dark); }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
 /* Clean Cards */
 .glass { background: var(--glass); backdrop-filter: blur(8px); border: 1px solid var(--glass-border); border-radius: 12px; }
@@ -50,7 +67,7 @@ body {
 
 /* Form Styles */
 input, select, textarea {
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 10px 14px;
@@ -63,8 +80,8 @@ input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-
 button { cursor: pointer; border-radius: 8px; padding: 10px 20px; font-weight: 500; transition: var(--transition); border: none; }
 button.primary { background: var(--primary); color: white; }
 button.primary:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 4px 12px var(--primary-glow); }
-button.secondary { background: #ffffff; color: var(--text-main); border: 1px solid var(--border); }
-button.secondary:hover { background: #f1f5f9; }
+button.secondary { background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border); }
+button.secondary:hover { background: var(--bg-dark); }
 
 /* Layout Utilities */
 .flex { display: flex; }
@@ -198,14 +215,14 @@ button.secondary:hover { background: #f1f5f9; }
 .bg-primary { background-color: var(--primary); }
 .bg-secondary { background-color: var(--secondary); }
 .bg-bg-dark { background-color: var(--bg-dark); }
-.bg-white { background-color: #ffffff; }
+.bg-white { background-color: var(--bg-card); }
 .bg-white\/5 { background-color: rgba(255, 255, 255, 0.05); }
 .bg-white\/10 { background-color: rgba(255, 255, 255, 0.1); }
 .bg-primary\/5 { background-color: rgba(37, 99, 235, 0.05); }
 .bg-primary\/10 { background-color: rgba(37, 99, 235, 0.1); }
 .bg-secondary\/20 { background-color: rgba(124, 58, 237, 0.2); }
-.bg-slate-50 { background-color: #f8fafc; }
-.bg-slate-100 { background-color: #f1f5f9; }
+.bg-slate-50 { background-color: var(--bg-dark); opacity: 0.5; }
+.bg-slate-100 { background-color: var(--bg-dark); }
 
 .blur-\[100px\] { filter: blur(100px); }
 .blur-\[120px\] { filter: blur(120px); }
@@ -247,4 +264,4 @@ button.secondary:hover { background: #f1f5f9; }
 
 .custom-scrollbar::-webkit-scrollbar { width: 6px; }
 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
