@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
   FileText,
@@ -30,23 +31,36 @@ const SidebarItem = ({ icon: Icon, label, path, active, collapsed }) => (
   <Link to={path} style={{ textDecoration: 'none' }}>
     <div style={{
       display: 'flex', alignItems: 'center',
-      gap: collapsed ? 0 : '12px',
-      justifyContent: collapsed ? 'center' : 'flex-start',
-      padding: collapsed ? '12px' : '11px 14px',
+      gap: '12px',
+      padding: '11px 14px',
       borderRadius: '10px',
       marginBottom: '2px',
       cursor: 'pointer',
-      transition: 'all 0.2s',
+      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
       background: active ? 'linear-gradient(to right, #1a56c4, #2563eb)' : 'transparent',
       color: active ? '#ffffff' : '#64748b',
       boxShadow: active ? '0 4px 12px rgba(37,99,235,0.3)' : 'none',
       fontWeight: active ? 600 : 500,
+      position: 'relative',
+      overflow: 'hidden'
     }}
     onMouseEnter={e => { if (!active) { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.color = '#0f172a'; }}}
     onMouseLeave={e => { if (!active) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#64748b'; }}}
     >
-      <Icon size={18} style={{ flexShrink: 0 }} />
-      {!collapsed && <span style={{ fontSize: '13.5px', whiteSpace: 'nowrap' }}>{label}</span>}
+      <Icon size={18} style={{ flexShrink: 0, minWidth: '18px' }} />
+      <AnimatePresence>
+        {!collapsed && (
+          <motion.span 
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -10 }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
+            style={{ fontSize: '13.5px', whiteSpace: 'nowrap' }}
+          >
+            {label}
+          </motion.span>
+        )}
+      </AnimatePresence>
     </div>
   </Link>
 );
@@ -67,79 +81,104 @@ const PAGE_NAMES = {
 };
 
 const Layout = ({ children }) => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [isManualCollapsed, setIsManualCollapsed] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const isGlRoute = location.pathname.startsWith('/gl');
-
+  
+  const collapsed = isManualCollapsed && !isHovered;
   const pageName = PAGE_NAMES[location.pathname] || 'Page';
 
   return (
     <div style={{ display: 'flex', height: '100vh', background: '#f1f5f9', fontFamily: "'Inter', sans-serif", overflow: 'hidden' }}>
 
       {/* ── Sidebar ── */}
-      <aside style={{
-        width: collapsed ? '72px' : '240px',
-        minWidth: collapsed ? '72px' : '240px',
-        background: '#ffffff',
-        borderRight: '1px solid #e2e8f0',
-        display: 'flex', flexDirection: 'column',
-        transition: 'width 0.25s ease',
-        overflow: 'hidden',
-        boxShadow: '2px 0 8px rgba(0,0,0,0.04)',
-        zIndex: 10,
-      }}>
-        {/* Logo */}
+      <motion.aside 
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        animate={{ width: collapsed ? 72 : 240 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30, mass: 0.8 }}
+        style={{
+          background: '#ffffff',
+          borderRight: '1px solid #e2e8f0',
+          display: 'flex', flexDirection: 'column',
+          overflow: 'hidden',
+          boxShadow: '2px 0 8px rgba(0,0,0,0.04)',
+          zIndex: 10,
+        }}
+      >
+        {/* Logo & Toggle */}
         <div style={{
-          padding: collapsed ? '20px 0' : '20px 20px',
+          padding: '0 20px',
           display: 'flex', alignItems: 'center',
-          justifyContent: collapsed ? 'center' : 'space-between',
+          justifyContent: 'space-between',
           borderBottom: '1px solid #f1f5f9',
           minHeight: '64px',
+          overflow: 'hidden'
         }}>
-          {!collapsed && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <div style={{
-                width: '34px', height: '34px',
-                background: 'linear-gradient(135deg, #1a56c4, #2563eb)',
-                borderRadius: '9px',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '15px', fontWeight: 800, color: 'white',
-                boxShadow: '0 4px 10px rgba(37,99,235,0.3)',
-              }}>U</div>
-              <div>
-                <div style={{ fontSize: '13px', fontWeight: 700, color: '#0f172a', lineHeight: 1.2 }}>UNIGLOBAL</div>
-                <div style={{ fontSize: '9px', color: '#94a3b8', letterSpacing: '1px', textTransform: 'uppercase' }}>AI ERP System</div>
-              </div>
-            </div>
-          )}
-          {collapsed && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: '180px' }}>
             <div style={{
               width: '34px', height: '34px',
               background: 'linear-gradient(135deg, #1a56c4, #2563eb)',
               borderRadius: '9px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: '15px', fontWeight: 800, color: 'white',
+              boxShadow: '0 4px 10px rgba(37,99,235,0.3)',
+              flexShrink: 0
             }}>U</div>
-          )}
-          {!collapsed && (
-            <button onClick={() => setCollapsed(true)} style={{
-              background: 'none', border: 'none', cursor: 'pointer',
-              color: '#94a3b8', padding: '4px', borderRadius: '6px',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
-              <ChevronLeft size={18} />
-            </button>
-          )}
+            <AnimatePresence>
+              {!collapsed && (
+                <motion.div
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div style={{ fontSize: '13px', fontWeight: 700, color: '#0f172a', lineHeight: 1.2 }}>UNIGLOBAL</div>
+                  <div style={{ fontSize: '9px', color: '#94a3b8', letterSpacing: '1px', textTransform: 'uppercase' }}>AI ERP System</div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+          
+          <AnimatePresence>
+            {!collapsed && (
+              <motion.button 
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsManualCollapsed(!isManualCollapsed);
+                }} 
+                style={{
+                  background: 'none', border: 'none', cursor: 'pointer',
+                  color: '#94a3b8', padding: '6px', borderRadius: '8px',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = '#f1f5f9'}
+                onMouseLeave={e => e.currentTarget.style.background = 'none'}
+              >
+                <ChevronLeft size={18} style={{ transform: isManualCollapsed ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s' }} />
+              </motion.button>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Nav */}
-        <nav style={{ flex: 1, padding: '12px 10px', overflowY: 'auto' }}>
-          {!collapsed && (
-            <div style={{ fontSize: '10px', fontWeight: 700, color: '#cbd5e1', letterSpacing: '1.5px', textTransform: 'uppercase', padding: '8px 6px 6px', marginBottom: '4px' }}>
-              MAIN MENU
-            </div>
-          )}
+        <nav style={{ flex: 1, padding: '12px 10px', overflowY: 'auto', overflowX: 'hidden' }}>
+          <AnimatePresence>
+            {!collapsed && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                style={{ fontSize: '10px', fontWeight: 700, color: '#cbd5e1', letterSpacing: '1.5px', textTransform: 'uppercase', padding: '8px 6px 6px', marginBottom: '4px' }}
+              >
+                MAIN MENU
+              </motion.div>
+            )}
+          </AnimatePresence>
           {NAV.slice(0, 6).map(item => (
             <div key={item.path}>
               <SidebarItem 
@@ -153,35 +192,31 @@ const Layout = ({ children }) => {
               />
             </div>
           ))}
-          {!collapsed && (
-            <div style={{ fontSize: '10px', fontWeight: 700, color: '#cbd5e1', letterSpacing: '1.5px', textTransform: 'uppercase', padding: '16px 6px 6px', marginBottom: '4px' }}>
-              SYSTEM
-            </div>
-          )}
+          <AnimatePresence>
+            {!collapsed && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                style={{ fontSize: '10px', fontWeight: 700, color: '#cbd5e1', letterSpacing: '1.5px', textTransform: 'uppercase', padding: '16px 6px 6px', marginBottom: '4px' }}
+              >
+                SYSTEM
+              </motion.div>
+            )}
+          </AnimatePresence>
           {NAV.slice(6).map(item => (
             <SidebarItem key={item.path} {...item} active={location.pathname === item.path} collapsed={collapsed} />
           ))}
         </nav>
 
-        {/* Expand button when collapsed */}
-        {collapsed && (
-          <div style={{ padding: '12px', borderTop: '1px solid #f1f5f9' }}>
-            <button onClick={() => setCollapsed(false)} style={{
-              width: '100%', padding: '10px', background: 'none', border: 'none',
-              cursor: 'pointer', color: '#94a3b8', display: 'flex', justifyContent: 'center',
-              borderRadius: '8px',
-            }}
-            onMouseEnter={e => e.currentTarget.style.background = '#f1f5f9'}
-            onMouseLeave={e => e.currentTarget.style.background = 'none'}
-            >
-              <Menu size={18} />
-            </button>
-          </div>
-        )}
-
         {/* Logout */}
         {!collapsed && (
-          <div style={{ padding: '12px 10px', borderTop: '1px solid #f1f5f9' }}>
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            style={{ padding: '12px 10px', borderTop: '1px solid #f1f5f9' }}
+          >
             <div style={{
               display: 'flex', alignItems: 'center', gap: '12px',
               padding: '10px 14px', borderRadius: '10px',
@@ -195,9 +230,9 @@ const Layout = ({ children }) => {
               <LogOut size={18} style={{ flexShrink: 0 }} />
               <span>Logout</span>
             </div>
-          </div>
+          </motion.div>
         )}
-      </aside>
+      </motion.aside>
 
       {/* ── Main ── */}
       <main style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
