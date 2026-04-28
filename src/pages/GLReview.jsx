@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronLeft, CheckCircle2, Search, Bot, Loader2,
-  AlertCircle, Filter, Check, X, Edit2, ArrowRight, Sparkles,
+  AlertCircle, Filter, Check, X, Edit2, ArrowRight, Sparkles, Download
 } from 'lucide-react';
+import * as XLSX from 'xlsx';
 
 const GL_ACCOUNTS = [
   '4100 · Service Revenue',
@@ -70,6 +71,13 @@ export default function GLReview() {
     return matchSearch && matchStatus;
   });
 
+  const handleExport = () => {
+    const ws = XLSX.utils.json_to_sheet(filtered);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Validated Transactions");
+    XLSX.writeFile(wb, "GL_Review_Report.xlsx");
+  };
+
   const counts = {
     total: txns.length,
     pending: txns.filter(t => t.status === 'Pending').length,
@@ -130,6 +138,9 @@ export default function GLReview() {
         </div>
 
         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          <button onClick={handleExport} style={{ padding: '9px 18px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '13px', fontWeight: 700, color: '#64748b', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '7px' }}>
+            <Download size={15} /> Export Excel
+          </button>
           <button onClick={handleBulkApprove} disabled={selectedIds.size === 0} style={{
             padding: '9px 18px', background: selectedIds.size === 0 ? '#f1f5f9' : 'linear-gradient(to right,#1a56c4,#2563eb)',
             border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 700,

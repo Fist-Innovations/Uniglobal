@@ -21,7 +21,8 @@ import {
   Search,
   Filter,
   Check,
-  AlertTriangle
+  AlertTriangle,
+  Download
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as XLSX from 'xlsx';
@@ -175,10 +176,17 @@ const TrainingManagement = () => {
   };
 
   const exportLogs = () => {
-    const ws = XLSX.utils.json_to_sheet(logs);
+    const ws = XLSX.utils.json_to_sheet(filteredLogs);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Notification Logs");
     XLSX.writeFile(wb, "Training_Notification_Logs.xlsx");
+  };
+
+  const exportStudents = () => {
+    const ws = XLSX.utils.json_to_sheet(filteredStudents);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Students");
+    XLSX.writeFile(wb, "Training_Students_Report.xlsx");
   };
 
   const handleApplyFilters = (config) => {
@@ -239,6 +247,14 @@ const TrainingManagement = () => {
               style={{ padding: '10px 18px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '13px', fontWeight: 600, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
             >
               <Filter size={16} /> Filters
+            </button>
+          )}
+          {['students', 'logs'].includes(activeTab) && (
+            <button 
+              onClick={activeTab === 'students' ? exportStudents : exportLogs}
+              style={{ padding: '10px 18px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '13px', fontWeight: 600, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+            >
+              <Download size={16} /> Export
             </button>
           )}
           {activeTab === 'students' && (

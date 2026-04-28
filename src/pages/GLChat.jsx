@@ -44,16 +44,46 @@ const TABS = [
   { id: 'duplicate', label: 'Duplicate Detection', icon: Copy },
 ];
 
-export default function GLChat() {
+const GLChat = () => {
   const [tab, setTab] = useState('chat');
   const [messages, setMessages] = useState([
-    { role: 'assistant', text: 'Hello! I\'m your GL AI Assistant. Ask me anything about your ledger — expenses, revenue, anomalies, or account balances.' },
+    { role: 'assistant', text: "Hello! I'm your GL AI Assistant. Ask me anything about your ledger — expenses, revenue, anomalies, or account balances." },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [queryResult, setQueryResult] = useState(null);
   const [expanded, setExpanded] = useState({});
+  const [anomalies, setAnomalies] = useState(ANOMALIES);
   const endRef = useRef(null);
+
+  const triggerDownload = (filename, content) => {
+    const blob = new Blob([content], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
+  const handleExportPDF = () => {
+    triggerDownload('gl_report.pdf', 'SIMULATED PDF CONTENT: GL Account Summary');
+  };
+
+  const handleExportExcel = () => {
+    if (!queryResult) return;
+    const csv = "GL Account,Debit,Credit,Balance,Type\n" + 
+                queryResult.table.map(r => `${r.account},${r.debit},${r.credit},${r.bal},${r.status}`).join('\n');
+    triggerDownload('gl_data.csv', csv);
+  };
+
+  const dismissAnomaly = (id) => {
+    setAnomalies(prev => prev.filter(a => a.id !== id));
+  };
+
+  const reviewAnomaly = (id) => {
+    alert(`Opening detailed manual review for Anomaly ID: ${id}`);
+  };
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
 
@@ -196,11 +226,12 @@ export default function GLChat() {
                         <p style={{ fontSize: '12px', color: '#94a3b8' }}>Click any row to drill down</p>
                       </div>
                       <div style={{ display: 'flex', gap: '8px' }}>
-                        {['Export PDF', 'Export Excel'].map(t => (
-                          <button key={t} style={{ padding: '8px 14px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '12px', fontWeight: 600, color: '#64748b', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <Download size={13} />{t}
-                          </button>
-                        ))}
+                        <button onClick={handleExportPDF} style={{ padding: '8px 14px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '12px', fontWeight: 600, color: '#64748b', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <Download size={13} /> Export PDF
+                        </button>
+                        <button onClick={handleExportExcel} style={{ padding: '8px 14px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '12px', fontWeight: 600, color: '#64748b', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <Download size={13} /> Export Excel
+                        </button>
                       </div>
                     </div>
                     <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -248,12 +279,14 @@ export default function GLChat() {
               {/* Stats */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '16px' }}>
                 {[
-                  { label: 'Duplicate Entries',       val: ANOMALIES.filter(a => a.type === 'Duplicate').length,   col: '#dc2626', icon: '🔄' },
-                  { label: 'Suspicious Transactions', val: ANOMALIES.filter(a => a.type === 'Suspicious').length,  col: '#f59e0b', icon: '⚠️' },
-                  { label: 'Data Points Scanned',     val: '2,840',                                                 col: '#2563eb', icon: '🔍' },
+                  { label: 'Duplicate Entries',       val: anomalies.filter(a => a.type === 'Duplicate').length,   col: '#dc2626', icon: Copy },
+                  { label: 'Suspicious Transactions', val: anomalies.filter(a => a.type === 'Suspicious').length,  col: '#f59e0b', icon: AlertTriangle },
+                  { label: 'Data Points Scanned',     val: '2,840',                                                 col: '#2563eb', icon: Search },
                 ].map(s => (
                   <div key={s.label} style={{ ...S.card, padding: '20px', display: 'flex', alignItems: 'center', gap: '16px' }}>
-                    <div style={{ fontSize: '32px' }}>{s.icon}</div>
+                    <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: `${s.col}10`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <s.icon size={24} color={s.col} />
+                    </div>
                     <div>
                       <p style={{ fontSize: '28px', fontWeight: 800, color: s.col }}>{s.val}</p>
                       <p style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>{s.label}</p>
@@ -272,7 +305,7 @@ export default function GLChat() {
                     ))}
                   </div>
                 </div>
-                {ANOMALIES.map((a, i) => (
+                {anomalies.map((a, i) => (
                   <motion.div key={a.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.06 }}
                     style={{ ...S.card, padding: '18px 22px', display: 'flex', alignItems: 'center', gap: '18px', borderLeft: `4px solid ${sevColor[a.severity]}` }}>
                     <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: a.type === 'Duplicate' ? '#fef2f2' : '#fff7ed', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -287,8 +320,8 @@ export default function GLChat() {
                       <p style={{ fontSize: '12px', color: '#64748b' }}>Amount: <strong>{a.amt}</strong> · Date: {a.date} · Confidence: <strong style={{ color: sevColor[a.severity] }}>{a.confidence}%</strong></p>
                     </div>
                     <div style={{ display: 'flex', gap: '8px' }}>
-                      <button style={{ padding: '7px 14px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '12px', fontWeight: 600, color: '#64748b', cursor: 'pointer' }}>Dismiss</button>
-                      <button style={{ padding: '7px 14px', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '8px', fontSize: '12px', fontWeight: 600, color: '#2563eb', cursor: 'pointer' }}>Review</button>
+                      <button onClick={() => dismissAnomaly(a.id)} style={{ padding: '7px 14px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '12px', fontWeight: 600, color: '#64748b', cursor: 'pointer' }}>Dismiss</button>
+                      <button onClick={() => reviewAnomaly(a.id)} style={{ padding: '7px 14px', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '8px', fontSize: '12px', fontWeight: 600, color: '#2563eb', cursor: 'pointer' }}>Review</button>
                     </div>
                   </motion.div>
                 ))}
@@ -303,4 +336,6 @@ export default function GLChat() {
       </AnimatePresence>
     </div>
   );
-}
+};
+
+export default GLChat;

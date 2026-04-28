@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, AlertTriangle, CheckCircle2, Search, Filter, X, FileWarning, Clock, History, Edit2, Check, Calendar, User, DollarSign, Hash } from 'lucide-react';
+import { Plus, AlertTriangle, CheckCircle2, Search, Filter, X, FileWarning, Clock, History, Edit2, Check, Calendar, User, DollarSign, Hash, Download } from 'lucide-react';
+import * as XLSX from 'xlsx';
 
 const S = {
   card: { background: '#fff', borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' },
@@ -44,7 +45,21 @@ export default function GLDuplicate() {
       d.amt === `$${parseFloat(form.amt).toLocaleString('en-US', { minimumFractionDigits: 2 })}`
     );
     if (match) setWarning(match);
-    else { alert('✅ Journal Entry Created Successfully!'); setForm({ vendor: '', amt: '', ref: '', date: '' }); }
+    else { 
+      setDuplicates(prev => [...prev, { id: Date.now(), ...form, amt: `$${parseFloat(form.amt).toFixed(2)}`, conf: 0, status: 'Resolved', match: 'N/A' }]);
+      setForm({ vendor: '', amt: '', ref: '', date: '' });
+    }
+  };
+
+  const [editData, setEditData] = useState(null);
+
+  const startEdit = (entry) => {
+    setEditData({ ...entry, amt: entry.amt.replace('$', '').replace(',', '') });
+  };
+
+  const handleSaveEdit = () => {
+    setDuplicates(prev => prev.map(d => d.id === editData.id ? { ...editData, amt: `$${parseFloat(editData.amt).toFixed(2)}` } : d));
+    setEditData(null);
   };
 
   const handleProceed = () => {
@@ -60,6 +75,13 @@ export default function GLDuplicate() {
     return matchQ && matchD && matchV;
   });
 
+  const handleExport = () => {
+    const ws = XLSX.utils.json_to_sheet(filtered);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Duplicates");
+    XLSX.writeFile(wb, "Duplicate_Detection_Report.xlsx");
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
       {/* Header */}
@@ -69,6 +91,11 @@ export default function GLDuplicate() {
           <p style={{ fontSize: '13px', color: '#94a3b8' }}>AI-powered monitoring for journal entry redundancy</p>
         </div>
         <div style={{ display: 'flex', gap: '8px', padding: '6px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px' }}>
+          {view === 'report' && (
+            <button onClick={handleExport} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '9px 18px', border: '1px solid #e2e8f0', background: '#fff', borderRadius: '8px', fontSize: '13px', fontWeight: 600, color: '#64748b', cursor: 'pointer' }}>
+              <Download size={15} /> Export
+            </button>
+          )}
           {VIEWS.map(v => (
             <button key={v.id} onClick={() => setView(v.id)} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '9px 18px', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s', background: view === v.id ? 'linear-gradient(to right,#1a56c4,#2563eb)' : 'transparent', color: view === v.id ? '#fff' : '#64748b' }}>
               <v.icon size={15} style={{ flexShrink: 0 }} />{v.label}
@@ -249,7 +276,7 @@ export default function GLDuplicate() {
                         <td style={S.td}><span style={S.badge(statusColor[d.status])}>{d.status}</span></td>
                         <td style={S.td}>
                           <div style={{ display: 'flex', gap: '6px' }}>
-                            <button style={{ width: '28px', height: '28px', borderRadius: '7px', border: '1px solid #e2e8f0', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 }}>
+                            <button onClick={() => startEdit(d)} style={{ width: '28px', height: '28px', borderRadius: '7px', border: '1px solid #e2e8f0', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 }}>
                               <Edit2 size={14} color="#64748b" style={{ flexShrink: 0 }} />
                             </button>
                             <button onClick={() => setDuplicates(p => p.map(x => x.id === d.id ? { ...x, status: 'Resolved' } : x))}
@@ -269,56 +296,26 @@ export default function GLDuplicate() {
         </motion.div>
       </AnimatePresence>
 
-      {/* ── DUPLICATE WARNING MODAL ── */}
+      {/* ── EDIT MODAL ── */}
       <AnimatePresence>
-        {warning && (
+        {editData && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.6)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-            <motion.div initial={{ opacity: 0, scale: 0.92, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.92 }}
-              style={{ background: '#fff', borderRadius: '20px', padding: '32px', width: '100%', maxWidth: '520px', boxShadow: '0 30px 60px rgba(0,0,0,0.2)' }}>
-              {/* Icon */}
-              <div style={{ width: '60px', height: '60px', borderRadius: '16px', background: '#fef2f2', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
-                <AlertTriangle size={32} color="#dc2626" style={{ flexShrink: 0 }} />
-              </div>
-              <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#0f172a', textAlign: 'center', marginBottom: '6px' }}>Potential Duplicate Detected</h3>
-              <p style={{ fontSize: '13.5px', color: '#64748b', textAlign: 'center', marginBottom: '24px' }}>The AI found a high-confidence match for this entry in the ledger.</p>
-
-              {/* Confidence indicator */}
-              <div style={{ background: '#fff7ed', border: '1px solid #fed7aa', borderRadius: '12px', padding: '14px 18px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '13px', fontWeight: 700, color: '#92400e' }}>Match Confidence</span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ width: '100px', height: '8px', background: '#fed7aa', borderRadius: '4px', overflow: 'hidden' }}>
-                    <div style={{ height: '100%', width: `${warning.conf}%`, background: confColor(warning.conf), borderRadius: '4px' }} />
-                  </div>
-                  <span style={{ fontSize: '16px', fontWeight: 800, color: confColor(warning.conf) }}>{warning.conf}%</span>
-                </div>
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
+              style={{ background: '#fff', borderRadius: '20px', padding: '32px', width: '100%', maxWidth: '480px', boxShadow: '0 25px 50px rgba(0,0,0,0.2)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: 800 }}>Edit Flagged Entry</h3>
+                <button onClick={() => setEditData(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}><X size={20} /></button>
               </div>
 
-              {/* Matched entry details */}
-              <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '18px', marginBottom: '24px' }}>
-                <p style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.6px', marginBottom: '14px' }}>Matching Entry Found</p>
-                {[
-                  ['Vendor',    warning.vendor],
-                  ['Amount',    warning.amt],
-                  ['Reference', warning.ref],
-                  ['Matched',   warning.match],
-                ].map(([k, v]) => (
-                  <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', borderBottom: '1px solid #f1f5f9', fontSize: '13px' }}>
-                    <span style={{ color: '#64748b', fontWeight: 500 }}>{k}</span>
-                    <span style={{ fontWeight: 700, color: '#0f172a' }}>{v}</span>
-                  </div>
-                ))}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div><label style={S.label}>Vendor</label><input style={S.input} value={editData.vendor} onChange={e => setEditData({...editData, vendor: e.target.value})} /></div>
+                <div><label style={S.label}>Reference</label><input style={S.input} value={editData.ref} onChange={e => setEditData({...editData, ref: e.target.value})} /></div>
+                <div><label style={S.label}>Amount (USD)</label><input type="number" style={S.input} value={editData.amt} onChange={e => setEditData({...editData, amt: e.target.value})} /></div>
               </div>
 
-              {/* Options */}
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <button onClick={() => setWarning(null)}
-                  style={{ flex: 1, padding: '13px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '14px', fontWeight: 700, color: '#0f172a', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                  <Edit2 size={16} style={{ flexShrink: 0 }} /> Edit Entry
-                </button>
-                <button onClick={handleProceed}
-                  style={{ flex: 1, padding: '13px', background: '#dc2626', border: 'none', borderRadius: '10px', fontSize: '14px', fontWeight: 700, color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                  <AlertTriangle size={16} style={{ flexShrink: 0 }} /> Proceed (Flag for Audit)
-                </button>
+              <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
+                <button onClick={() => setEditData(null)} style={{ flex: 1, padding: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', fontWeight: 600 }}>Cancel</button>
+                <button onClick={handleSaveEdit} style={{ flex: 1, padding: '12px', background: '#2563eb', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 700 }}>Save Changes</button>
               </div>
             </motion.div>
           </div>
