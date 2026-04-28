@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { UploadCloud, FileText, BarChart3, Calculator, CheckCircle2, ArrowRight, TrendingUp, Download, Edit2, Check, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 const S = {
   card: { background: '#fff', borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' },
@@ -45,6 +48,8 @@ const btn = (primary) => ({
 export default function ShippingKuwait() {
   const [step, setStep] = useState('upload');
   const [uploaded, setUploaded] = useState([]);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [tempFiles, setTempFiles] = useState([]);
   const [fieldMap, setFieldMap] = useState({ Revenue: 'Revenue', Assets: 'Total Assets', Profit: 'Net Income', Expenses: 'Operating Expenses' });
   const [budget, setBudget] = useState(COMPANIES.map(c => ({
     name: c.name,
@@ -76,6 +81,62 @@ export default function ShippingKuwait() {
   const handleBulkApprove = () => {
     setApproved(true);
     // In a real app, we'd mark selectedIds as approved in the backend
+  };
+
+  const handleFileSelect = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length > 0) {
+      setTempFiles(files);
+      setShowConfirm(true);
+    }
+  };
+
+  const confirmUpload = () => {
+    setUploaded(tempFiles.map(f => f.name));
+    setShowConfirm(false);
+    // Auto-advance or wait for user to click continue? 
+    // Usually wait so they can see the "Uploaded" status list.
+  };
+
+  const exportToExcel = () => {
+    const data = budget.map(b => ({
+      'Company Name': b.name,
+      'Revenue 2025': COMPANIES.find(c => c.name === b.name)?.revenue || 0,
+      'Revenue 2026': b.revenue,
+      'Assets 2026': b.assets,
+      'Profit 2026': b.profit,
+      'Expenses 2026': b.expenses
+    }));
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Budget 2026");
+    XLSX.writeFile(wb, "Shipping_Budget_Kuwait_2026.xlsx");
+  };
+
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Shipping Management — Kuwait Financial Budget 2026", 14, 15);
+    doc.setFontSize(10);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 22);
+    
+    const tableData = budget.map(b => [
+      b.name,
+      COMPANIES.find(c => c.name === b.name)?.revenue.toLocaleString() || '0',
+      b.revenue.toLocaleString(),
+      b.assets.toLocaleString(),
+      b.profit.toLocaleString(),
+      b.expenses.toLocaleString()
+    ]);
+
+    autoTable(doc, {
+      startY: 30,
+      head: [['Company', 'Rev 2025', 'Rev 2026', 'Assets 2026', 'Profit 2026', 'Expenses 2026']],
+      body: tableData,
+      theme: 'grid',
+      headStyles: { fillColor: [26, 86, 196] }
+    });
+
+    doc.save("Shipping_Budget_Kuwait_2026.pdf");
   };
 
   const compChart = [
@@ -111,13 +172,45 @@ export default function ShippingKuwait() {
           {/* STEP 1: UPLOAD */}
           {step === 'upload' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              <input type="file" id="shipping-upload" multiple style={{ display: 'none' }} onChange={handleFileSelect} />
               <div style={{ ...S.card, padding: '48px', textAlign: 'center', border: '2px dashed #bfdbfe', background: '#fafbff', cursor: 'pointer' }}
-                onClick={() => { setUploaded(COMPANIES.map(c => c.file)); }}>
+                onClick={() => document.getElementById('shipping-upload').click()}>
                 <UploadCloud size={48} style={{ color: '#2563eb', margin: '0 auto 16px' }} />
                 <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', marginBottom: '8px' }}>Drop Financial Reports Here</h3>
                 <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '20px' }}>Supports PDF, Excel (.xlsx), CSV. Upload multiple company reports at once.</p>
                 <button style={btn(true)}><UploadCloud size={16} /> Select Files</button>
               </div>
+
+              <AnimatePresence>
+                {showConfirm && (
+                  <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
+                    <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+                      style={{ ...S.card, width: '100%', maxWidth: '440px', padding: '32px', textAlign: 'center' }}>
+                      <div style={{ width: '64px', height: '64px', background: '#eff6ff', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+                        <UploadCloud size={32} color="#2563eb" />
+                      </div>
+                      <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#0f172a', marginBottom: '10px' }}>Confirm File Upload</h2>
+                      <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '24px', lineHeight: 1.5 }}>
+                        You are about to upload <strong>{tempFiles.length}</strong> financial report{tempFiles.length > 1 ? 's' : ''} for analysis. Do you wish to continue?
+                      </p>
+                      
+                      <div style={{ background: '#f8fafc', borderRadius: '12px', padding: '12px', marginBottom: '24px', textAlign: 'left', maxHeight: '120px', overflowY: 'auto' }}>
+                        {tempFiles.map((f, i) => (
+                          <div key={i} style={{ fontSize: '12px', color: '#475569', display: 'flex', alignItems: 'center', gap: '8px', padding: '4px 0' }}>
+                            <FileText size={14} /> {f.name} ({(f.size / 1024).toFixed(1)} KB)
+                          </div>
+                        ))}
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '12px' }}>
+                        <button onClick={() => setShowConfirm(false)} style={{ ...btn(false), flex: 1, justifyContent: 'center' }}>Cancel</button>
+                        <button onClick={confirmUpload} style={{ ...btn(true), flex: 1, justifyContent: 'center' }}>Confirm &amp; Start</button>
+                      </div>
+                    </motion.div>
+                  </div>
+                )}
+              </AnimatePresence>
+
               {uploaded.length > 0 && (
                 <div style={S.card}>
                   <div style={{ padding: '16px 20px', borderBottom: '1px solid #f1f5f9', fontWeight: 700, color: '#0f172a' }}>Uploaded Files ({uploaded.length})</div>
@@ -327,8 +420,8 @@ export default function ShippingKuwait() {
                     <div style={{ fontSize: '12px', color: '#94a3b8' }}>Kuwait Financial Comparison · {selectedIds.size} of {COMPANIES.length} selected</div>
                   </div>
                   <div style={{ display: 'flex', gap: '10px' }}>
-                    <button style={{ ...btn(false), background: '#fff', border: '1px solid #e2e8f0' }}><Download size={16} /> Export PDF</button>
-                    <button style={{ ...btn(false), background: '#fff', border: '1px solid #e2e8f0' }}><Download size={16} /> Export Excel</button>
+                    <button onClick={exportToPDF} style={{ ...btn(false), background: '#fff', border: '1px solid #e2e8f0' }}><Download size={16} /> Export PDF</button>
+                    <button onClick={exportToExcel} style={{ ...btn(false), background: '#fff', border: '1px solid #e2e8f0' }}><Download size={16} /> Export Excel</button>
                   </div>
                 </div>
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>

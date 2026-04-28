@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { UploadCloud, Globe, BarChart3, Calculator, AlertTriangle, ArrowRight, Check, X, Download, Filter } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar } from 'recharts';
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 const S = {
   card: { background: '#fff', borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' },
@@ -41,6 +44,8 @@ const btn = (p) => ({ padding: '10px 20px', border: 'none', borderRadius: '10px'
 export default function ShippingGCC() {
   const [step, setStep] = useState('upload');
   const [uploaded, setUploaded] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [tempFiles, setTempFiles] = useState([]);
   const [filter, setFilter] = useState({ country: 'All', company: 'All' });
   const [selectedBudgetIds, setSelectedBudgetIds] = useState(new Set(COUNTRIES.map(c => c.code)));
   const [selectedAnomalyIds, setSelectedAnomalyIds] = useState(new Set(ANOMALIES.map((_, i) => i)));
@@ -74,6 +79,64 @@ export default function ShippingGCC() {
     else setSelectedAnomalyIds(new Set(ANOMALIES.map((_, i) => i)));
   };
 
+  const handleFileSelect = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length > 0) {
+      setTempFiles(files);
+      setShowConfirm(true);
+    }
+  };
+
+  const confirmUpload = () => {
+    setUploaded(true);
+    setShowConfirm(false);
+  };
+
+  const exportBudgetExcel = () => {
+    const data = COUNTRIES.map(c => {
+      const revUSD = Math.round(c.revenue * c.rate);
+      return {
+        'Country': c.name,
+        'Currency': c.currency,
+        'Revenue (Local)': c.revenue,
+        'Revenue (USD)': revUSD,
+        'Budget 2026 (USD)': Math.round(revUSD * 1.10),
+        'Profit 2026 (USD)': Math.round(c.profit * c.rate * 1.10),
+        'Expenses 2026 (USD)': Math.round(c.expenses * c.rate * 0.95)
+      };
+    });
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "GCC Budget 2026");
+    XLSX.writeFile(wb, "Shipping_GCC_Budget_2026.xlsx");
+  };
+
+  const exportAnomalyPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Shipping Management — GCC Anomaly Detection Report", 14, 15);
+    doc.setFontSize(10);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 22);
+    
+    const tableData = ANOMALIES.map(a => [
+      a.country,
+      a.metric,
+      a.value,
+      a.expected,
+      a.severity,
+      a.detail
+    ]);
+
+    autoTable(doc, {
+      startY: 30,
+      head: [['Country', 'Metric', 'Detected', 'Expected', 'Severity', 'Detail']],
+      body: tableData,
+      theme: 'grid',
+      headStyles: { fillColor: [220, 38, 38] }
+    });
+
+    doc.save("Shipping_GCC_Anomalies_Report.pdf");
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Step Bar */}
@@ -95,12 +158,45 @@ export default function ShippingGCC() {
           {/* STEP 1: MULTI-COUNTRY UPLOAD */}
           {step === 'upload' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              <div style={{ ...S.card, padding: '48px', textAlign: 'center', border: '2px dashed #bfdbfe', background: '#fafbff', cursor: 'pointer' }} onClick={() => setUploaded(true)}>
+              <input type="file" id="gcc-upload" multiple style={{ display: 'none' }} onChange={handleFileSelect} />
+              <div style={{ ...S.card, padding: '48px', textAlign: 'center', border: '2px dashed #bfdbfe', background: '#fafbff', cursor: 'pointer' }} 
+                onClick={() => document.getElementById('gcc-upload').click()}>
                 <Globe size={48} style={{ color: '#2563eb', margin: '0 auto 16px' }} />
                 <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', marginBottom: '8px' }}>Multi-Country Financial Data Upload</h3>
                 <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '20px' }}>Upload reports from all 6 GCC countries. Supports PDF, Excel, CSV formats.</p>
                 <button style={btn(true)}><UploadCloud size={16} /> Select Country Files</button>
               </div>
+
+              <AnimatePresence>
+                {showConfirm && (
+                  <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
+                    <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+                      style={{ ...S.card, width: '100%', maxWidth: '440px', padding: '32px', textAlign: 'center' }}>
+                      <div style={{ width: '64px', height: '64px', background: '#eff6ff', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+                        <Globe size={32} color="#2563eb" />
+                      </div>
+                      <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#0f172a', marginBottom: '10px' }}>Confirm GCC Data Upload</h2>
+                      <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '24px', lineHeight: 1.5 }}>
+                        You are about to upload <strong>{tempFiles.length}</strong> regional report{tempFiles.length > 1 ? 's' : ''} for multi-country analysis. Continue?
+                      </p>
+                      
+                      <div style={{ background: '#f8fafc', borderRadius: '12px', padding: '12px', marginBottom: '24px', textAlign: 'left', maxHeight: '120px', overflowY: 'auto' }}>
+                        {tempFiles.map((f, i) => (
+                          <div key={i} style={{ fontSize: '12px', color: '#475569', display: 'flex', alignItems: 'center', gap: '8px', padding: '4px 0' }}>
+                            <Globe size={14} /> {f.name} ({(f.size / 1024).toFixed(1)} KB)
+                          </div>
+                        ))}
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '12px' }}>
+                        <button onClick={() => setShowConfirm(false)} style={{ ...btn(false), flex: 1, justifyContent: 'center' }}>Cancel</button>
+                        <button onClick={confirmUpload} style={{ ...btn(true), flex: 1, justifyContent: 'center' }}>Confirm &amp; Upload</button>
+                      </div>
+                    </motion.div>
+                  </div>
+                )}
+              </AnimatePresence>
+
               {uploaded && (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '16px' }}>
                   {COUNTRIES.map(c => (
@@ -248,7 +344,7 @@ export default function ShippingGCC() {
                 <div style={{ padding: '16px 20px', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '15px' }}>Aggregated GCC Budget View — FY 2026</div>
                   <div style={{ display: 'flex', gap: '10px' }}>
-                    <button style={{ ...btn(false), padding: '8px 14px' }}><Download size={14} /> Export</button>
+                    <button onClick={exportBudgetExcel} style={{ ...btn(false), padding: '8px 14px' }}><Download size={14} /> Export Excel</button>
                     <button disabled={selectedBudgetIds.size === 0} style={{ ...btn(true), padding: '8px 14px' }}>
                       <Check size={14} /> Approve Selected ({selectedBudgetIds.size})
                     </button>
@@ -346,7 +442,7 @@ export default function ShippingGCC() {
                   <div style={{ fontSize: '13px', color: '#64748b' }}>{selectedAnomalyIds.size} outliers selected in GCC regional data. Review and take action.</div>
                 </div>
                 <div style={{ display: 'flex', gap: '12px' }}>
-                  <button style={{ ...btn(false), background: '#fff', border: '1px solid #e2e8f0' }}><Download size={16} /> Export Report</button>
+                  <button onClick={exportAnomalyPDF} style={{ ...btn(false), background: '#fff', border: '1px solid #e2e8f0' }}><Download size={16} /> Export PDF Report</button>
                   <button onClick={() => setAnomaliesReviewed(true)} disabled={selectedAnomalyIds.size === 0} style={{ ...btn(true), background: anomaliesReviewed ? '#059669' : selectedAnomalyIds.size === 0 ? '#e2e8f0' : 'linear-gradient(to right,#1a56c4,#2563eb)' }}>
                     <Check size={16} /> {anomaliesReviewed ? 'Reviewed ✓' : `Mark Selected as Reviewed (${selectedAnomalyIds.size})`}
                   </button>

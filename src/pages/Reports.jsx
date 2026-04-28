@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import * as XLSX from 'xlsx';
 import { 
   BarChart3, 
   PieChart as PieIcon, 
@@ -69,13 +70,27 @@ const Reports = () => {
   const [activeReport, setActiveReport] = useState('gl');
 
   const reportTypes = [
-    { id: 'gl', label: 'GL Reports', icon: FileText },
-    { id: 'accuracy', label: 'AI Accuracy', icon: Target },
-    { id: 'duplicates', label: 'Duplicate Detection', icon: PieIcon },
-    { id: 'communication', label: 'Student Communication', icon: Users },
-    { id: 'finance', label: 'Financial Comparison', icon: BarChart3 },
-    { id: 'budget', label: 'Budget Reports', icon: TrendingUp },
+    { id: 'gl', label: 'GL Reports', icon: FileText, data: GLReportData },
+    { id: 'accuracy', label: 'AI Accuracy', icon: Target, data: AccuracyData },
+    { id: 'duplicates', label: 'Duplicate Detection', icon: PieIcon, data: [
+      { date: '2026-04-20', vendor: 'Amazon Web Services', amount: '$1,240.50', status: 'Potential Duplicate' },
+      { date: '2026-04-21', vendor: 'Starbucks Coffee', amount: '$45.20', status: 'Potential Duplicate' },
+      { date: '2026-04-22', vendor: 'Office Depot', amount: '$215.00', status: 'System Flagged' },
+    ] },
+    { id: 'communication', label: 'Student Communication', icon: Users, data: CommData },
+    { id: 'finance', label: 'Financial Comparison', icon: BarChart3, data: FinanceCompData },
+    { id: 'budget', label: 'Budget Reports', icon: TrendingUp, data: BudgetData },
   ];
+
+  const handleExport = () => {
+    const report = reportTypes.find(r => r.id === activeReport);
+    if (!report || !report.data) return;
+
+    const ws = XLSX.utils.json_to_sheet(report.data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, report.label);
+    XLSX.writeFile(wb, `${report.label.replace(/\s+/g, '_')}_Report.xlsx`);
+  };
 
   const renderGLReport = () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', minWidth: 0 }}>
@@ -340,7 +355,10 @@ const Reports = () => {
           <p style={{ fontSize: '13px', color: '#94a3b8' }}>Comprehensive data insights across all ERP modules.</p>
         </div>
         <div style={{ display: 'flex', gap: '10px' }}>
-          <button style={{ padding: '9px 16px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '13px', fontWeight: 600, color: '#64748b', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <button 
+            onClick={handleExport}
+            style={{ padding: '9px 16px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '13px', fontWeight: 600, color: '#64748b', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+          >
             <Download size={16} /> Export
           </button>
           <button style={{ padding: '9px 18px', background: 'linear-gradient(to right, #1a56c4, #2563eb)', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 700, color: 'white', cursor: 'pointer', boxShadow: '0 4px 12px rgba(37,99,235,0.3)', display: 'flex', alignItems: 'center', gap: '8px' }}>
