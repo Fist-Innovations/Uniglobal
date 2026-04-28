@@ -60,6 +60,7 @@ export default function GLReview() {
   const [statusFilter, setStatusFilter] = useState('All');
   const [editingId, setEditingId] = useState(null);
   const [editGl, setEditGl] = useState('');
+  const [selectedIds, setSelectedIds] = useState(new Set());
 
   const filtered = txns.filter(t => {
     const matchSearch = t.desc.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -85,8 +86,29 @@ export default function GLReview() {
     setEditingId(null);
   };
 
-  const handleBulkApprove = () =>
-    setTxns(prev => prev.map(t => t.status === 'Pending' ? { ...t, status: 'Approved' } : t));
+  const toggleSelect = (id) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filtered.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filtered.map(t => t.id)));
+    }
+  };
+
+  const handleBulkApprove = () => {
+    setTxns(prev => prev.map(t => 
+      (selectedIds.has(t.id) && t.status === 'Pending') ? { ...t, status: 'Approved' } : t
+    ));
+    setSelectedIds(new Set());
+  };
 
   const canProceed = counts.pending === 0;
 
@@ -108,14 +130,14 @@ export default function GLReview() {
         </div>
 
         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-          <button onClick={handleBulkApprove} disabled={counts.pending === 0} style={{
-            padding: '9px 18px', background: counts.pending === 0 ? '#f1f5f9' : 'linear-gradient(to right,#1a56c4,#2563eb)',
+          <button onClick={handleBulkApprove} disabled={selectedIds.size === 0} style={{
+            padding: '9px 18px', background: selectedIds.size === 0 ? '#f1f5f9' : 'linear-gradient(to right,#1a56c4,#2563eb)',
             border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 700,
-            color: counts.pending === 0 ? '#94a3b8' : '#fff', cursor: counts.pending === 0 ? 'not-allowed' : 'pointer',
+            color: selectedIds.size === 0 ? '#94a3b8' : '#fff', cursor: selectedIds.size === 0 ? 'not-allowed' : 'pointer',
             display: 'flex', alignItems: 'center', gap: '7px', transition: 'all 0.2s',
-            boxShadow: counts.pending > 0 ? '0 4px 12px rgba(37,99,235,0.3)' : 'none',
+            boxShadow: selectedIds.size > 0 ? '0 4px 12px rgba(37,99,235,0.3)' : 'none',
           }}>
-            <CheckCircle2 size={15} /> Bulk Approve All
+            <CheckCircle2 size={15} /> Approve Selected ({selectedIds.size})
           </button>
           <button onClick={() => navigate('/gl/confirm', { state: { txns } })} disabled={!canProceed} style={{
             padding: '9px 18px',
@@ -173,6 +195,14 @@ export default function GLReview() {
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr>
+                <th style={{ ...S.th, width: '40px', paddingRight: 0 }}>
+                  <input 
+                    type="checkbox" 
+                    checked={filtered.length > 0 && selectedIds.size === filtered.length} 
+                    onChange={toggleSelectAll}
+                    style={{ cursor: 'pointer', width: '16px', height: '16px', accentColor: '#2563eb' }}
+                  />
+                </th>
                 {['Date', 'Description', 'Amount', 'Suggested GL Account', 'Confidence', 'Status', 'Actions'].map(h => (
                   <th key={h} style={S.th}>{h}</th>
                 ))}
@@ -182,7 +212,16 @@ export default function GLReview() {
               <AnimatePresence>
                 {filtered.map((t, i) => (
                   <motion.tr key={t.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, x: -20 }}
-                    style={{ background: i % 2 === 0 ? '#fff' : '#fafbff' }}>
+                    style={{ background: selectedIds.has(t.id) ? '#eff6ff' : i % 2 === 0 ? '#fff' : '#fafbff' }}>
+
+                    <td style={{ ...S.td, paddingRight: 0 }}>
+                      <input 
+                        type="checkbox" 
+                        checked={selectedIds.has(t.id)} 
+                        onChange={() => toggleSelect(t.id)}
+                        style={{ cursor: 'pointer', width: '16px', height: '16px', accentColor: '#2563eb' }}
+                      />
+                    </td>
 
                     <td style={{ ...S.td, whiteSpace: 'nowrap', color: '#64748b', fontWeight: 500 }}>{t.date}</td>
 

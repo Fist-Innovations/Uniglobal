@@ -48,8 +48,30 @@ export default function GLPost() {
   const [batchRef] = useState(`BATCH-${Math.floor(Math.random() * 9000) + 1000}`);
   const [failedStep, setFailedStep] = useState(null);
 
-  const totalCredit = txns.filter(t => t.amt >= 0).reduce((s, t) => s + t.amt, 0);
-  const totalDebit  = txns.filter(t => t.amt < 0).reduce((s, t) => s + Math.abs(t.amt), 0);
+  const [selectedIds, setSelectedIds] = useState(new Set(txns.map(t => t.id)));
+
+  const selectedTxns = txns.filter(t => selectedIds.has(t.id));
+  const totalCredit = selectedTxns.filter(t => t.amt >= 0).reduce((s, t) => s + t.amt, 0);
+  const totalDebit  = selectedTxns.filter(t => t.amt < 0).reduce((s, t) => s + Math.abs(t.amt), 0);
+
+  const toggleSelect = (id) => {
+    if (phase === 'posting' || phase === 'success') return;
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (phase === 'posting' || phase === 'success') return;
+    if (selectedIds.size === txns.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(txns.map(t => t.id)));
+    }
+  };
 
   const runPost = (simulateFail = false) => {
     setPhase('posting');
@@ -103,7 +125,7 @@ export default function GLPost() {
           </button>
           <div>
             <h1 style={{ fontSize: '21px', fontWeight: 800, color: '#0f172a', marginBottom: '2px' }}>Post to ERP</h1>
-            <p style={{ fontSize: '12.5px', color: '#94a3b8' }}>One-click posting · {txns.length} journal entries · Batch <strong style={{ color: '#2563eb' }}>{batchRef}</strong></p>
+            <p style={{ fontSize: '12.5px', color: '#94a3b8' }}>One-click posting · {selectedIds.size} of {txns.length} entries · Batch <strong style={{ color: '#2563eb' }}>{batchRef}</strong></p>
           </div>
         </div>
         {phase === 'success' && (
@@ -116,7 +138,7 @@ export default function GLPost() {
       {/* ── Batch Summary Cards ── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
         {[
-          { label: 'Total Entries',  val: txns.length,                                             col: '#2563eb', bg: '#eff6ff' },
+          { label: 'Total Selected', val: selectedIds.size,                                             col: '#2563eb', bg: '#eff6ff' },
           { label: 'Total Credits',  val: `$${totalCredit.toLocaleString('en-US',{minimumFractionDigits:2})}`, col: '#059669', bg: '#ecfdf5' },
           { label: 'Total Debits',   val: `$${totalDebit.toLocaleString('en-US',{minimumFractionDigits:2})}`,  col: '#dc2626', bg: '#fef2f2' },
           { label: 'Batch Reference',val: batchRef,                                                col: '#7c3aed', bg: '#f5f3ff' },
@@ -169,9 +191,9 @@ export default function GLPost() {
               {phase === 'failed'  ? 'Posting Failed'        : ''}
             </h2>
             <p style={{ fontSize: '13px', color: '#64748b', maxWidth: '280px', margin: '0 auto' }}>
-              {phase === 'idle'    ? `${txns.length} entries will be written to the ERP general ledger.` : ''}
+              {phase === 'idle'    ? `${selectedIds.size} entries will be written to the ERP general ledger.` : ''}
               {phase === 'posting' ? 'Please do not close this window while posting is in progress.' : ''}
-              {phase === 'success' ? `All ${txns.length} journal entries synced. Ref: ${batchRef}` : ''}
+              {phase === 'success' ? `All ${selectedIds.size} journal entries synced. Ref: ${batchRef}` : ''}
               {phase === 'failed'  ? 'An error occurred during posting. Review the log and retry.' : ''}
             </p>
           </div>
@@ -179,13 +201,13 @@ export default function GLPost() {
           {/* Action Buttons */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {(phase === 'idle' || phase === 'failed') && (
-              <button onClick={() => runPost(false)}
-                style={{ width: '100%', padding: '14px', background: 'linear-gradient(to right,#0f172a,#1e293b)', border: 'none', borderRadius: '12px', fontSize: '14px', fontWeight: 700, color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '9px', boxShadow: '0 6px 20px rgba(15,23,42,0.3)', transition: 'transform 0.1s' }}
+              <button onClick={() => runPost(false)} disabled={selectedIds.size === 0}
+                style={{ width: '100%', padding: '14px', background: selectedIds.size === 0 ? '#f1f5f9' : 'linear-gradient(to right,#0f172a,#1e293b)', border: 'none', borderRadius: '12px', fontSize: '14px', fontWeight: 700, color: selectedIds.size === 0 ? '#94a3b8' : '#fff', cursor: selectedIds.size === 0 ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '9px', boxShadow: selectedIds.size > 0 ? '0 6px 20px rgba(15,23,42,0.3)' : 'none', transition: 'transform 0.1s' }}
                 onMouseDown={e => e.currentTarget.style.transform = 'scale(0.98)'}
                 onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
               >
                 {phase === 'failed' ? <RefreshCw size={16} /> : <Send size={16} />}
-                {phase === 'failed' ? 'Retry Posting' : 'Post to ERP'}
+                {phase === 'failed' ? 'Retry Posting Selected' : `Post Selected (${selectedIds.size})`}
               </button>
             )}
             {phase === 'idle' && (
@@ -261,7 +283,7 @@ export default function GLPost() {
                 <p style={{ fontSize: '11px', fontWeight: 700, color: '#064e3b', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>Batch Summary</p>
                 {[
                   ['Batch Reference', batchRef],
-                  ['Entries Posted',  `${txns.length} journal entries`],
+                  ['Entries Posted',  `${selectedIds.size} journal entries`],
                   ['Total Credits',   `$${totalCredit.toLocaleString('en-US',{minimumFractionDigits:2})}`],
                   ['Total Debits',    `$${totalDebit.toLocaleString('en-US',{minimumFractionDigits:2})}`],
                   ['Posted At',       new Date().toLocaleString()],
@@ -303,6 +325,9 @@ export default function GLPost() {
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr>
+                <th style={{ padding: '11px 18px', width: '40px', background: '#f8fafc' }}>
+                  <input type="checkbox" checked={txns.length > 0 && selectedIds.size === txns.length} onChange={toggleSelectAll} disabled={phase !== 'idle' && phase !== 'failed'} style={{ cursor: 'pointer', width: '15px', height: '15px', accentColor: '#2563eb' }} />
+                </th>
                 {['#', 'Date', 'Description', 'GL Account', 'Amount', 'Status'].map(h => (
                   <th key={h} style={{ padding: '11px 18px', fontSize: '10.5px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.8px', background: '#f8fafc', textAlign: 'left', whiteSpace: 'nowrap' }}>{h}</th>
                 ))}
@@ -310,7 +335,10 @@ export default function GLPost() {
             </thead>
             <tbody>
               {txns.map((t, i) => (
-                <tr key={t.id} style={{ background: i % 2 === 0 ? '#fff' : '#fafbff' }}>
+                <tr key={t.id} style={{ background: selectedIds.has(t.id) ? '#eff6ff' : i % 2 === 0 ? '#fff' : '#fafbff', opacity: phase !== 'idle' && phase !== 'failed' && !selectedIds.has(t.id) ? 0.5 : 1 }}>
+                  <td style={{ padding: '13px 18px' }}>
+                    <input type="checkbox" checked={selectedIds.has(t.id)} onChange={() => toggleSelect(t.id)} disabled={phase !== 'idle' && phase !== 'failed'} style={{ cursor: 'pointer', width: '15px', height: '15px', accentColor: '#2563eb' }} />
+                  </td>
                   <td style={{ padding: '13px 18px', fontSize: '12px', color: '#94a3b8', fontWeight: 600 }}>{String(i + 1).padStart(2, '0')}</td>
                   <td style={{ padding: '13px 18px', fontSize: '13px', color: '#64748b', whiteSpace: 'nowrap' }}>{t.date}</td>
                   <td style={{ padding: '13px 18px', fontSize: '13px', color: '#0f172a', fontWeight: 600, maxWidth: '260px' }}>{t.desc}</td>

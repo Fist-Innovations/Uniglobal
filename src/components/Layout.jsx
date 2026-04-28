@@ -12,30 +12,18 @@ import {
   LogOut,
   Bot,
   ChevronLeft,
-  ChevronDown,
   BarChart3,
-  UploadCloud,
-  ClipboardCheck,
-  ListChecks,
-  SendHorizonal,
 } from 'lucide-react';
 
 const NAV = [
   { icon: LayoutDashboard, label: 'Dashboard',     path: '/' },
-  { icon: FileText,        label: 'General Ledger', path: '/gl/upload', hasSubnav: true },
+  { icon: FileText,        label: 'General Ledger', path: '/gl/upload' },
   { icon: Bot,             label: 'GL AI Bot',      path: '/gl/chat' },
   { icon: Ship,            label: 'Shipping',       path: '/shipping/comparison' },
   { icon: GraduationCap,   label: 'Training',       path: '/training' },
   { icon: BarChart3,       label: 'Reports',        path: '/reports' },
   { icon: Bell,            label: 'Notifications',  path: '/notifications' },
   { icon: Settings,        label: 'Settings',       path: '/settings' },
-];
-
-const GL_STEPS = [
-  { icon: UploadCloud,    label: '1. Upload',      path: '/gl/upload' },
-  { icon: ListChecks,     label: '2. Process',     path: '/gl/review' },
-  { icon: ClipboardCheck, label: '3. Review',      path: '/gl/confirm' },
-  { icon: SendHorizonal,  label: '4. Post to ERP', path: '/gl/post' },
 ];
 
 const SidebarItem = ({ icon: Icon, label, path, active, collapsed }) => (
@@ -83,7 +71,6 @@ const Layout = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const isGlRoute = location.pathname.startsWith('/gl');
-  const [glOpen, setGlOpen] = useState(isGlRoute);
 
   const pageName = PAGE_NAMES[location.pathname] || 'Page';
 
@@ -155,59 +142,15 @@ const Layout = ({ children }) => {
           )}
           {NAV.slice(0, 6).map(item => (
             <div key={item.path}>
-              {item.hasSubnav && !collapsed ? (
-                <>
-                  {/* GL parent row */}
-                  <div
-                    onClick={() => setGlOpen(o => !o)}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: '12px',
-                      padding: '11px 14px', borderRadius: '10px', marginBottom: '2px',
-                      cursor: 'pointer', transition: 'all 0.2s',
-                      background: isGlRoute ? 'linear-gradient(to right,#1a56c4,#2563eb)' : 'transparent',
-                      color: isGlRoute ? '#fff' : '#64748b',
-                      boxShadow: isGlRoute ? '0 4px 12px rgba(37,99,235,0.3)' : 'none',
-                      fontWeight: isGlRoute ? 600 : 500,
-                      userSelect: 'none',
-                    }}
-                    onMouseEnter={e => { if (!isGlRoute) { e.currentTarget.style.background='#f1f5f9'; e.currentTarget.style.color='#0f172a'; }}}
-                    onMouseLeave={e => { if (!isGlRoute) { e.currentTarget.style.background='transparent'; e.currentTarget.style.color='#64748b'; }}}
-                  >
-                    <item.icon size={18} style={{ flexShrink: 0 }} />
-                    <span style={{ fontSize: '13.5px', flex: 1, whiteSpace: 'nowrap' }}>{item.label}</span>
-                    <ChevronDown size={14} style={{ flexShrink: 0, transition: 'transform 0.2s', transform: glOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
-                  </div>
-
-                  {/* GL sub-steps */}
-                  {glOpen && (
-                    <div style={{ marginLeft: '14px', paddingLeft: '14px', borderLeft: '2px solid #e2e8f0', marginBottom: '4px' }}>
-                      {GL_STEPS.map(step => {
-                        const active = location.pathname === step.path;
-                        return (
-                          <Link key={step.path} to={step.path} style={{ textDecoration: 'none' }}>
-                            <div style={{
-                              display: 'flex', alignItems: 'center', gap: '9px',
-                              padding: '8px 10px', borderRadius: '8px', marginBottom: '2px',
-                              cursor: 'pointer', transition: 'all 0.15s',
-                              background: active ? '#eff6ff' : 'transparent',
-                              color: active ? '#2563eb' : '#94a3b8',
-                              fontWeight: active ? 700 : 500,
-                            }}
-                            onMouseEnter={e => { if (!active) { e.currentTarget.style.background='#f8fafc'; e.currentTarget.style.color='#475569'; }}}
-                            onMouseLeave={e => { if (!active) { e.currentTarget.style.background='transparent'; e.currentTarget.style.color='#94a3b8'; }}}
-                            >
-                              <step.icon size={14} style={{ flexShrink: 0 }} />
-                              <span style={{ fontSize: '12.5px', whiteSpace: 'nowrap' }}>{step.label}</span>
-                            </div>
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  )}
-                </>
-              ) : (
-                <SidebarItem {...item} active={location.pathname === item.path} collapsed={collapsed} />
-              )}
+              <SidebarItem 
+                {...item} 
+                active={
+                  item.path === '/gl/upload' 
+                    ? (location.pathname.startsWith('/gl') && !['/gl/chat', '/gl/duplicate'].includes(location.pathname))
+                    : location.pathname === item.path
+                } 
+                collapsed={collapsed} 
+              />
             </div>
           ))}
           {!collapsed && (

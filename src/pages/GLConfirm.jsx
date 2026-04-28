@@ -40,12 +40,31 @@ export default function GLConfirm() {
   const { state } = useLocation();
   const txns = (state?.txns || FALLBACK);
   const [confirmed, setConfirmed] = useState(false);
+  const [selectedIds, setSelectedIds] = useState(new Set(txns.map(t => t.id)));
 
-  const errors   = txns.filter(t => t.conf < 70 || t.warning);
-  const approved = txns.filter(t => t.status === 'Approved');
-  const corrected = txns.filter(t => t.status === 'Corrected');
-  const totalCredit = txns.filter(t => t.amt >= 0).reduce((s, t) => s + t.amt, 0);
-  const totalDebit  = txns.filter(t => t.amt < 0).reduce((s, t) => s + Math.abs(t.amt), 0);
+  const selectedTxns = txns.filter(t => selectedIds.has(t.id));
+  const errors   = selectedTxns.filter(t => t.conf < 70 || t.warning);
+  const approved = selectedTxns.filter(t => t.status === 'Approved');
+  const corrected = selectedTxns.filter(t => t.status === 'Corrected');
+  const totalCredit = selectedTxns.filter(t => t.amt >= 0).reduce((s, t) => s + t.amt, 0);
+  const totalDebit  = selectedTxns.filter(t => t.amt < 0).reduce((s, t) => s + Math.abs(t.amt), 0);
+
+  const toggleSelect = (id) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === txns.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(txns.map(t => t.id)));
+    }
+  };
 
   const handleConfirm = () => setConfirmed(true);
 
@@ -60,26 +79,26 @@ export default function GLConfirm() {
           </button>
           <div>
             <h1 style={{ fontSize: '21px', fontWeight: 800, color: '#0f172a', marginBottom: '2px' }}>Review &amp; Confirmation</h1>
-            <p style={{ fontSize: '12.5px', color: '#94a3b8' }}>Verify all entries before posting to ERP · {txns.length} entries</p>
+            <p style={{ fontSize: '12.5px', color: '#94a3b8' }}>Verify all entries before posting to ERP · {selectedIds.size} of {txns.length} selected</p>
           </div>
         </div>
 
-        <button onClick={() => navigate('/gl/post', { state: { txns } })} disabled={!confirmed}
+        <button onClick={() => navigate('/gl/post', { state: { txns: selectedTxns } })} disabled={!confirmed || selectedIds.size === 0}
           style={{
             padding: '10px 22px', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 700,
-            background: confirmed ? 'linear-gradient(to right,#0f172a,#1e293b)' : '#f1f5f9',
-            color: confirmed ? '#fff' : '#94a3b8', cursor: confirmed ? 'pointer' : 'not-allowed',
+            background: confirmed && selectedIds.size > 0 ? 'linear-gradient(to right,#0f172a,#1e293b)' : '#f1f5f9',
+            color: confirmed && selectedIds.size > 0 ? '#fff' : '#94a3b8', cursor: confirmed && selectedIds.size > 0 ? 'pointer' : 'not-allowed',
             display: 'flex', alignItems: 'center', gap: '8px',
-            boxShadow: confirmed ? '0 4px 12px rgba(15,23,42,0.3)' : 'none', transition: 'all 0.2s',
+            boxShadow: confirmed && selectedIds.size > 0 ? '0 4px 12px rgba(15,23,42,0.3)' : 'none', transition: 'all 0.2s',
           }}>
-          <Send size={14} /> Post to ERP
+          <Send size={14} /> Post Selected ({selectedIds.size})
         </button>
       </div>
 
       {/* ── Summary Cards ── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
         {[
-          { label: 'Total Entries', val: txns.length,       col: '#2563eb', bg: '#eff6ff', icon: Sparkles },
+          { label: 'Total Entries', val: selectedIds.size,    col: '#2563eb', bg: '#eff6ff', icon: Sparkles },
           { label: 'Auto-Approved', val: approved.length,   col: '#059669', bg: '#ecfdf5', icon: CheckCircle2 },
           { label: 'Corrected',     val: corrected.length,  col: '#9333ea', bg: '#fdf4ff', icon: Bot },
           { label: 'Errors / Flags', val: errors.length,    col: '#dc2626', bg: '#fef2f2', icon: AlertTriangle },
@@ -166,11 +185,19 @@ export default function GLConfirm() {
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr>{['Date', 'Description', 'Amount', 'GL Account', 'Confidence', 'Status'].map(h => <th key={h} style={S.th}>{h}</th>)}</tr>
+              <tr>
+                <th style={{ ...S.th, width: '40px', paddingRight: 0 }}>
+                  <input type="checkbox" checked={txns.length > 0 && selectedIds.size === txns.length} onChange={toggleSelectAll} style={{ cursor: 'pointer', width: '15px', height: '15px', accentColor: '#2563eb' }} />
+                </th>
+                {['Date', 'Description', 'Amount', 'GL Account', 'Confidence', 'Status'].map(h => <th key={h} style={S.th}>{h}</th>)}
+              </tr>
             </thead>
             <tbody>
               {txns.map((t, i) => (
-                <tr key={t.id} style={{ background: i % 2 === 0 ? '#fff' : '#fafbff' }}>
+                <tr key={t.id} style={{ background: selectedIds.has(t.id) ? '#eff6ff' : i % 2 === 0 ? '#fff' : '#fafbff' }}>
+                  <td style={{ ...S.td, paddingRight: 0 }}>
+                    <input type="checkbox" checked={selectedIds.has(t.id)} onChange={() => toggleSelect(t.id)} style={{ cursor: 'pointer', width: '15px', height: '15px', accentColor: '#2563eb' }} />
+                  </td>
                   <td style={{ ...S.td, color: '#64748b', whiteSpace: 'nowrap' }}>{t.date}</td>
                   <td style={{ ...S.td, fontWeight: 600, color: '#0f172a', maxWidth: '260px' }}>{t.desc}</td>
                   <td style={{ ...S.td, fontWeight: 700, whiteSpace: 'nowrap', color: t.amt >= 0 ? '#059669' : '#0f172a' }}>{fmtAmt(t.amt)}</td>
@@ -203,19 +230,19 @@ export default function GLConfirm() {
           <input type="checkbox" checked={confirmed} onChange={e => setConfirmed(e.target.checked)}
             style={{ width: '18px', height: '18px', accentColor: '#059669', cursor: 'pointer' }} />
           <div>
-            <p style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a' }}>I confirm all entries have been reviewed and are accurate</p>
+            <p style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a' }}>I confirm the selected {selectedIds.size} entries have been reviewed</p>
             <p style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>This will authorize the batch for ERP posting. This action cannot be undone.</p>
           </div>
         </label>
-        <button onClick={() => navigate('/gl/post', { state: { txns } })} disabled={!confirmed}
+        <button onClick={() => navigate('/gl/post', { state: { txns: selectedTxns } })} disabled={!confirmed || selectedIds.size === 0}
           style={{
             padding: '13px 28px', border: 'none', borderRadius: '12px', fontSize: '14px', fontWeight: 700,
-            background: confirmed ? 'linear-gradient(to right,#0f172a,#1e293b)' : '#e2e8f0',
-            color: confirmed ? '#fff' : '#94a3b8', cursor: confirmed ? 'pointer' : 'not-allowed',
+            background: confirmed && selectedIds.size > 0 ? 'linear-gradient(to right,#0f172a,#1e293b)' : '#e2e8f0',
+            color: confirmed && selectedIds.size > 0 ? '#fff' : '#94a3b8', cursor: confirmed && selectedIds.size > 0 ? 'pointer' : 'not-allowed',
             display: 'flex', alignItems: 'center', gap: '9px', whiteSpace: 'nowrap', flexShrink: 0,
-            boxShadow: confirmed ? '0 6px 20px rgba(15,23,42,0.35)' : 'none', transition: 'all 0.2s',
+            boxShadow: confirmed && selectedIds.size > 0 ? '0 6px 20px rgba(15,23,42,0.35)' : 'none', transition: 'all 0.2s',
           }}>
-          <Send size={16} /> Post to ERP <ArrowRight size={14} />
+          <Send size={16} /> Post Selected ({selectedIds.size}) <ArrowRight size={14} />
         </button>
       </div>
     </div>

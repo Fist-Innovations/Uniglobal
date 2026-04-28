@@ -29,6 +29,8 @@ const GLUpload = () => {
   const [fileList, setFileList] = useState(INITIAL_FILES);
   const [isUploading, setIsUploading] = useState(false);
   const [reviewFile, setReviewFile] = useState(null);
+  const [pendingFile, setPendingFile] = useState(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const triggerFileInput = () => {
     if (!isUploading) fileInputRef.current?.click();
@@ -37,22 +39,29 @@ const GLUpload = () => {
   const handleFileSelect = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    setIsUploading(true);
-    // Reset input value so the same file can be selected again
+    setPendingFile(file);
+    setShowConfirmModal(true);
+    // Reset input value
     e.target.value = null;
+  };
+
+  const processUpload = () => {
+    if (!pendingFile) return;
+    setShowConfirmModal(false);
+    setIsUploading(true);
 
     setTimeout(() => {
       const newFile = {
         id: Date.now(),
-        name: file.name,
+        name: pendingFile.name,
         date: new Date().toISOString().split('T')[0],
-        size: (file.size / (1024 * 1024)).toFixed(2) + ' MB',
+        size: (pendingFile.size / (1024 * 1024)).toFixed(2) + ' MB',
         status: 'Pending',
         rows: Math.floor(Math.random() * 200) + 50
       };
       setFileList(prev => [newFile, ...prev]);
       setIsUploading(false);
+      setPendingFile(null);
     }, 1500);
   };
 
@@ -255,6 +264,53 @@ const GLUpload = () => {
                 <button onClick={() => setReviewFile(null)} style={{ padding: '10px 16px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '13px', fontWeight: 600, color: '#64748b', cursor: 'pointer' }}>Cancel</button>
                 <button onClick={() => navigate('/gl/review')} style={{ padding: '10px 20px', background: 'linear-gradient(to right, #1a56c4, #2563eb)', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 700, color: 'white', cursor: 'pointer', boxShadow: '0 4px 12px rgba(37,99,235,0.25)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   Open in Transaction Review →
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Upload Confirmation Modal */}
+      <AnimatePresence>
+        {showConfirmModal && pendingFile && (
+          <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15,23,42,0.5)', backdropFilter: 'blur(5px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1001 }}>
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              style={{ background: '#fff', borderRadius: '20px', padding: '32px', width: '100%', maxWidth: '440px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', textAlign: 'center' }}
+            >
+              <div style={{ width: '64px', height: '64px', borderRadius: '18px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+                <FileText size={32} color="#2563eb" />
+              </div>
+              
+              <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>Confirm Upload</h3>
+              <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '24px' }}>Are you sure you want to upload this bank statement for processing?</p>
+              
+              <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '16px', marginBottom: '28px', textAlign: 'left' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase' }}>File Name</span>
+                  <span style={{ fontSize: '13px', color: '#0f172a', fontWeight: 700, maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{pendingFile.name}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase' }}>Size</span>
+                  <span style={{ fontSize: '13px', color: '#0f172a', fontWeight: 600 }}>{(pendingFile.size / (1024 * 1024)).toFixed(2)} MB</span>
+                </div>
+              </div>
+              
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <button 
+                  onClick={() => { setShowConfirmModal(false); setPendingFile(null); }}
+                  style={{ flex: 1, padding: '12px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px', fontSize: '14px', fontWeight: 600, color: '#64748b', cursor: 'pointer' }}
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={processUpload}
+                  style={{ flex: 1, padding: '12px', background: 'linear-gradient(to right, #1a56c4, #2563eb)', border: 'none', borderRadius: '12px', fontSize: '14px', fontWeight: 700, color: 'white', cursor: 'pointer', boxShadow: '0 4px 12px rgba(37,99,235,0.25)' }}
+                >
+                  Confirm & Upload
                 </button>
               </div>
             </motion.div>

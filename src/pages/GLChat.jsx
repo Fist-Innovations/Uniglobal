@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
-import { Bot, Send, Search, AlertTriangle, BarChart3, Download, ChevronDown, ChevronRight, Sparkles, TrendingUp, TrendingDown, Eye } from 'lucide-react';
+import { Bot, Send, Search, AlertTriangle, BarChart3, Download, ChevronDown, ChevronRight, Sparkles, TrendingUp, TrendingDown, Eye, Copy } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import GLDuplicate from './GLDuplicate';
 
 const S = {
   card: { background: '#fff', borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' },
@@ -37,9 +38,10 @@ const ANOMALIES = [
 const sevColor = { High: '#dc2626', Medium: '#f59e0b', Low: '#2563eb' };
 
 const TABS = [
-  { id: 'chat',    label: 'GL Chat',          icon: Bot },
-  { id: 'results', label: 'Query Results',    icon: BarChart3 },
-  { id: 'anomaly', label: 'Anomaly Detection', icon: AlertTriangle },
+  { id: 'chat',       label: 'GL Chat',            icon: Bot },
+  { id: 'results',   label: 'Query Results',      icon: BarChart3 },
+  { id: 'anomaly',   label: 'Anomaly Detection',  icon: AlertTriangle },
+  { id: 'duplicate', label: 'Duplicate Detection', icon: Copy },
 ];
 
 export default function GLChat() {
@@ -293,6 +295,9 @@ export default function GLChat() {
               </div>
             </div>
           )}
+
+          {/* ── TAB 4: DUPLICATE DETECTION ── */}
+          {tab === 'duplicate' && <GLDuplicate />}
 
         </motion.div>
       </AnimatePresence>
