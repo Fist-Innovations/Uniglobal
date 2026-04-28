@@ -64,7 +64,7 @@ const GLDuplicate = () => {
             boxShadow: '0 4px 12px rgba(37,99,235,0.3)'
           }}
         >
-          {view === 'list' ? <Plus size={16} /> : <History size={16} />}
+          {view === 'list' ? <Plus size={18} style={{ flexShrink: 0 }} /> : <History size={18} style={{ flexShrink: 0 }} />}
           {view === 'list' ? 'New Journal Entry' : 'Back to Reports'}
         </button>
       </div>

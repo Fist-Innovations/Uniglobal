@@ -97,9 +97,9 @@ export default function GLPost() {
           <button
             onClick={() => navigate('/gl/confirm', { state: { txns } })}
             disabled={phase === 'posting'}
-            style={{ width: '38px', height: '38px', borderRadius: '10px', background: '#fff', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: phase === 'posting' ? 'not-allowed' : 'pointer', opacity: phase === 'posting' ? 0.5 : 1 }}
+            style={{ width: '38px', height: '38px', borderRadius: '10px', background: '#fff', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: phase === 'posting' ? 'not-allowed' : 'pointer', opacity: phase === 'posting' ? 0.5 : 1, padding: 0 }}
           >
-            <ChevronLeft size={18} color="#374151" />
+            <ChevronLeft size={22} color="#374151" style={{ flexShrink: 0 }} />
           </button>
           <div>
             <h1 style={{ fontSize: '21px', fontWeight: 800, color: '#0f172a', marginBottom: '2px' }}>Post to ERP</h1>

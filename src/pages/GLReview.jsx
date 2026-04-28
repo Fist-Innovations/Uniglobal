@@ -98,8 +98,8 @@ export default function GLReview() {
       {/* ── Header ── */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <button onClick={() => navigate('/gl/upload')} style={{ width: '38px', height: '38px', borderRadius: '10px', background: '#fff', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-            <ChevronLeft size={18} color="#374151" />
+          <button onClick={() => navigate('/gl/upload')} style={{ width: '38px', height: '38px', borderRadius: '10px', background: '#fff', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 }}>
+            <ChevronLeft size={22} color="#374151" style={{ flexShrink: 0 }} />
           </button>
           <div>
             <h1 style={{ fontSize: '21px', fontWeight: 800, color: '#0f172a', marginBottom: '2px' }}>Transaction Processing</h1>
@@ -233,21 +233,21 @@ export default function GLReview() {
                     </td>
 
                     <td style={S.td}>
-                      <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                         {t.status === 'Pending' && (
                           <button onClick={() => setStatus(t.id, 'Approved')} title="Accept suggestion"
-                            style={{ width: '30px', height: '30px', borderRadius: '7px', border: 'none', background: '#ecfdf5', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-                            <Check size={14} color="#059669" strokeWidth={2.5} />
+                            style={{ width: '30px', height: '30px', borderRadius: '7px', border: 'none', background: '#ecfdf5', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 }}>
+                            <Check size={16} color="#059669" style={{ flexShrink: 0 }} />
                           </button>
                         )}
                         <button onClick={() => openEdit(t)} title="Edit GL manually"
-                          style={{ width: '30px', height: '30px', borderRadius: '7px', border: '1px solid #e2e8f0', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-                          <Edit2 size={13} color="#64748b" strokeWidth={2.5} />
+                          style={{ width: '30px', height: '30px', borderRadius: '7px', border: '1px solid #e2e8f0', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 }}>
+                          <Edit2 size={16} color="#64748b" style={{ flexShrink: 0 }} />
                         </button>
                         {t.status !== 'Pending' && (
                           <button onClick={() => setStatus(t.id, 'Pending')} title="Reset to Pending"
-                            style={{ width: '30px', height: '30px', borderRadius: '7px', border: '1px solid #fecaca', background: '#fef2f2', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-                            <X size={13} color="#dc2626" strokeWidth={2.5} />
+                            style={{ width: '30px', height: '30px', borderRadius: '7px', border: '1px solid #fecaca', background: '#fef2f2', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 }}>
+                            <X size={16} color="#dc2626" style={{ flexShrink: 0 }} />
                           </button>
                         )}
                       </div>
